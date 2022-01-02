@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -9,10 +10,6 @@ import 'package:sms/Dashboard/dashboard_controller.dart';
 import 'package:sms/Models/attendance_model.dart';
 import 'package:sms/Models/class_model.dart';
 import 'package:sms/Models/student_model.dart';
-import 'package:sms/Utils/constants.dart';
-import 'package:sms/Widgets/custom_button.dart';
-import 'package:sms/Widgets/custom_text_field.dart';
-import 'package:uuid/uuid.dart';
 
 class StudentsScreen extends StatelessWidget {
   static const String routeName = "/student_screen";
@@ -62,11 +59,16 @@ class StudentsScreen extends StatelessWidget {
                           builder: (context) {
                         return Card(
                             child: ListTile(
-                          leading: Image.network(
-                            dashCtrl.getStudentImageUrl(categoryModel.photo),
-                            height: 60,
+                          leading: CachedNetworkImage(
+                            imageUrl: dashCtrl
+                                .getStudentImageUrl(categoryModel.photo),
+                            placeholder: (context, url) =>
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: CircularProgressIndicator(),
+                                ),
                             width: 60,
-                            fit: BoxFit.cover,
+                            height: 60,
                           ),
                           title: Text(categoryModel.name),
                           subtitle: Text(categoryModel.email),
@@ -87,7 +89,7 @@ class StudentsScreen extends StatelessWidget {
                                     Fluttertoast.showToast(
                                         msg: "Deleted Successfully");
                                   },
-                                  icon: Icon(
+                                  icon: const Icon(
                                     Icons.delete,
                                     color: Colors.redAccent,
                                   ),
@@ -125,8 +127,17 @@ class StudentsScreen extends StatelessWidget {
 
                         return Card(
                             child: ListTile(
-                          leading: Image.network(dashCtrl
-                              .getStudentImageUrl(categoryModel.stdPhoto)),
+                          leading: CachedNetworkImage(
+                            imageUrl: dashCtrl
+                                .getStudentImageUrl(categoryModel.stdPhoto),
+                            placeholder: (context, url) =>
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: CircularProgressIndicator(),
+                                ),
+                            width: 60,
+                            height: 60,
+                          ),
                           title: Text(categoryModel.stdName),
                           subtitle: Text("${categoryModel.stdEmail}\n${date}"),
                           trailing: Icon(
@@ -178,7 +189,12 @@ class StudentsScreen extends StatelessWidget {
                   Get.toNamed(AttendanceScreen.routeName, arguments: classId);
                 }
               },
-              child: Icon(Icons.atm),
+              backgroundColor: Colors.white,
+              child: Image.asset(
+                "assets/images/face.png",
+                width: 40,
+                height: 40,
+              ),
               heroTag: null,
             ),
             SizedBox(
@@ -188,7 +204,7 @@ class StudentsScreen extends StatelessWidget {
               onPressed: () {
                 Get.toNamed(AddStudentScreen.routeName, arguments: classId);
               },
-              child: Icon(Icons.add),
+              child: const Icon(Icons.add),
               heroTag: null,
             ),
           ],

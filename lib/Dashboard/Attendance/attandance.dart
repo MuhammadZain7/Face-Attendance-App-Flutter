@@ -21,6 +21,7 @@ class AttendanceScreen extends StatelessWidget {
 
   // List<Candidate> identifiedStudents = [];
   List<StudentModel> studentList = [];
+  bool isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -32,12 +33,19 @@ class AttendanceScreen extends StatelessWidget {
         return SingleChildScrollView(
           child: Column(
             children: [
-              image != null
-                  ? Image.file(
-                      File(image!.path),
-                      height: 200,
-                    )
-                  : Image.asset("assets/images/no_data.png"),
+              Center(
+                child: image != null
+                    ? Image.file(
+                        File(image!.path),
+                        height: 200,
+                        width: double.infinity,
+                      )
+                    : Image.asset(
+                        "assets/images/capture.png",
+                        height: 200,
+                      ),
+              ),
+              Divider(),
               if (studentList.isNotEmpty)
                 ListView.builder(
                   shrinkWrap: true,
@@ -68,38 +76,59 @@ class AttendanceScreen extends StatelessWidget {
           ),
         );
       }),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          // await dashCtrl.addAttendance(studentList,classId);
-
-          if (image == null) {
-            if (kIsWeb) {
-              image = await _picker.pickImage(source: ImageSource.gallery);
-            } else {
-              String? selectedType = await pickImageDialog(context);
-              if (selectedType == "Camera") {
-                image = await _picker.pickImage(source: ImageSource.camera);
-              } else if (selectedType == "Gallery") {
-                image = await _picker.pickImage(source: ImageSource.gallery);
-              } else {
-                Fluttertoast.showToast(msg: "Select Image");
-              }
-            }
-            dashCtrl.update();
-          } else {
-            List<Candidate> identifiedStudents =
-                await dashCtrl.faceIdentification(classId, File(image!.path));
-            if (identifiedStudents.isNotEmpty) {
-              studentList =
-                  await dashCtrl.getStudentFromIds(identifiedStudents);
-              dashCtrl.update();
-            } else {
-              showSnackBar("No Student Found!");
-            }
-          }
-        },
-        child: Icon(Icons.ac_unit),
-      ),
+      floatingActionButton: GetBuilder<DashboardController>(builder: (_) {
+        return isLoading
+            ? Center(child: CircularProgressIndicator())
+            : Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  FloatingActionButton(
+                    onPressed: () async {
+                      if (kIsWeb) {
+                        image = await _picker.pickImage(
+                            source: ImageSource.gallery);
+                      } else {
+                        String? selectedType = await pickImageDialog(context);
+                        if (selectedType == "Camera") {
+                          image = await _picker.pickImage(
+                              source: ImageSource.camera);
+                        } else if (selectedType == "Gallery") {
+                          image = await _picker.pickImage(
+                              source: ImageSource.gallery);
+                        } else {
+                          Fluttertoast.showToast(msg: "Select Image");
+                        }
+                      }
+                      dashCtrl.update();
+                    },
+                    heroTag: null,
+                    child: Icon(Icons.camera),
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  FloatingActionButton(
+                    onPressed: () async {
+                      isLoading = true;
+                      dashCtrl.update();
+                      List<Candidate> identifiedStudents = await dashCtrl
+                          .faceIdentification(classId, File(image!.path));
+                      if (identifiedStudents.isNotEmpty) {
+                        studentList = await dashCtrl
+                            .getStudentFromIds(identifiedStudents);
+                        dashCtrl.update();
+                      } else {
+                        showSnackBar("No Student Found!");
+                      }
+                      isLoading = false;
+                      dashCtrl.update();
+                    },
+                    child: Icon(Icons.search),
+                    heroTag: null,
+                  )
+                ],
+              );
+      }),
     );
   }
 }
