@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -9,21 +8,23 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sms/Dashboard/dashboard_service.dart';
 import 'package:sms/Models/detection_model.dart';
+import 'package:sms/Models/identify_model.dart';
+import 'package:sms/Models/student_model.dart';
 
 class DashboardController extends GetxController {
   final dashService = Get.find<DashboardService>();
 
   bool isLoading = false;
-  final _fireStore = FirebaseFirestore.instance;
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
-  CollectionReference category =
-      FirebaseFirestore.instance.collection('category');
-  CollectionReference suppliers =
-      FirebaseFirestore.instance.collection('supplier');
-  CollectionReference customers =
-      FirebaseFirestore.instance.collection('customer');
-  CollectionReference products =
-      FirebaseFirestore.instance.collection('product');
+
+  // CollectionReference category =
+  //     FirebaseFirestore.instance.collection('category');
+  // CollectionReference suppliers =
+  //     FirebaseFirestore.instance.collection('supplier');
+  // CollectionReference customers =
+  //     FirebaseFirestore.instance.collection('customer');
+  // CollectionReference products =
+  //     FirebaseFirestore.instance.collection('product');
 
   // CollectionReference products =
   // FirebaseFirestore.instance.collection('product');
@@ -58,13 +59,13 @@ class DashboardController extends GetxController {
     // if (firebaseAuth.currentUser?.uid != null) getCategories();
   }
 
-  Stream<QuerySnapshot> getCustomers() {
-    // log("UID ${firebaseAuth.currentUser?.uid ?? "Null"}");
-    return customers
-        // .orderBy("customer_name", descending: true)
-        .where("uid", isEqualTo: firebaseAuth.currentUser!.uid)
-        .snapshots();
-  }
+  // Stream<QuerySnapshot> getCustomers() {
+  //   // log("UID ${firebaseAuth.currentUser?.uid ?? "Null"}");
+  //   return  customers
+  //       // .orderBy("customer_name", descending: true)
+  //       .where("uid", isEqualTo: firebaseAuth.currentUser!.uid)
+  //       .snapshots();
+  // }
 
   String getStudentImageUrl(name) {
     return "https://firebasestorage.googleapis.com/v0/b/my-project-1494048213269.appspot.com/o/StudentsImages%2F$name?alt=media";
@@ -82,7 +83,7 @@ class DashboardController extends GetxController {
   //   var aa = await category.add(categoryModel.toJson());
   // }
   addStudentInClass(classId, stdName, email, phone, rollNo, File photo) async {
-    return dashService.addStudentInClass(
+    return await dashService.addStudentInClass(
         classId, stdName, email, phone, rollNo, photo);
   }
 
@@ -92,6 +93,22 @@ class DashboardController extends GetxController {
         .listen((ConnectivityResult result) {
       // Get.snackbar("Connections ", "");
     });
+  }
+
+  Future<List<Candidate>> faceIdentification(classId, File image) async {
+    return await dashService.faceIdentification(classId, image);
+  }
+
+  Future<List<StudentModel>> getStudentFromIds(identifiedStudents) async {
+    return await dashService.getStudentFromIds(identifiedStudents);
+  }
+
+  addAttendance(List<StudentModel> attendanceModel) async {
+    return await dashService.addAttendance(attendanceModel);
+  }
+
+  Stream<QuerySnapshot> getAttendance(classId) {
+    return dashService.getAttendance(classId);
   }
 
   Future<List<DetectionModel>> detectFacesFromImage(File image) async {

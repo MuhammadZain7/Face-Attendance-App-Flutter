@@ -41,7 +41,7 @@ class Candidate {
   });
 
   String personId;
-  int confidence;
+  double confidence;
 
   factory Candidate.fromJson(Map<String, dynamic> json) => Candidate(
         personId: json["personId"],

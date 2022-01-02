@@ -9,12 +9,14 @@ import 'package:flutter/foundation.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:sms/Models/attendance_model.dart';
 import 'package:sms/Models/detection_model.dart';
 import 'package:sms/Models/identify_model.dart';
 import 'package:sms/Models/lp_group_model.dart';
 import 'package:sms/Models/class_model.dart';
 import 'package:sms/Models/student_model.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+import 'package:uuid/uuid.dart';
 
 class DashboardService extends GetConnect {
   String baseURL = "https://fazecam2.cognitiveservices.azure.com/face/v1.0";
@@ -26,6 +28,9 @@ class DashboardService extends GetConnect {
 
   CollectionReference students =
       FirebaseFirestore.instance.collection('students');
+
+  CollectionReference attendance =
+      FirebaseFirestore.instance.collection('attendance');
 
   firebase_storage.FirebaseStorage storage =
       firebase_storage.FirebaseStorage.instance;
@@ -64,9 +69,31 @@ class DashboardService extends GetConnect {
     }
   }
 
-  Future faceIdentification(classId, List<String> faceIds) async {
+  Future<List<Candidate>> faceIdentification(classId, File image) async {
+    List<Candidate> identifiedStudent = [];
+
+    List<DetectionModel> detectedFace = await detectFacesFromImage(image);
+    if (detectedFace.isEmpty) {
+      Fluttertoast.showToast(
+          msg: "No Face Found in Image", toastLength: Toast.LENGTH_LONG);
+      log("No Face Found in Image");
+      return [];
+    }
+    bool isTrained = await trainClass(classId);
+    if (!isTrained) {
+      Fluttertoast.showToast(
+          msg: "Training Error", toastLength: Toast.LENGTH_LONG);
+      log("Training Error");
+      return [];
+    }
+
+    List<String> faceIds = [];
+    for (var element in detectedFace) {
+      faceIds.add(element.faceId);
+    }
+
     http.Response response = await http
-        .put(
+        .post(
       Uri.parse('$baseURL/identify'),
       headers: {
         'Ocp-Apim-Subscription-Key': faceApiKey,
@@ -79,16 +106,45 @@ class DashboardService extends GetConnect {
       }),
     )
         .catchError((e) {
-      log('Create Class $e');
+      log('Identify Class $e');
     });
-    print('$classId XXX ${response.body}');
+    print(
+        '$classId XXX ${response.statusCode} XXX Error Identify Class XXX ${response.body}');
     if (response.statusCode == 200) {
       var a = jsonDecode(response.body);
       List<IdentifyModel> identifyModel =
           List.from(a).map((e) => IdentifyModel.fromJson(e)).toList();
+
+      for (var element in identifyModel) {
+        if (element.candidates != null &&
+            element.candidates?.elementAt(0) != null) {
+          identifiedStudent.add(element.candidates!.elementAt(0));
+        }
+      }
+      return identifiedStudent;
     } else {
-      Fluttertoast.showToast(msg: "Error Create Class");
+      Fluttertoast.showToast(msg: "Error Identify Class");
+      return [];
     }
+  }
+
+  Future<List<StudentModel>> getStudentFromIds(
+      List<Candidate> identifiedStudents) async {
+    List<StudentModel> studentsList = [];
+    for (var element in identifiedStudents) {
+      await students
+          .where("teacher_id", isEqualTo: firebaseAuth.currentUser!.uid)
+          .where("std_id", isEqualTo: element.personId)
+          .limit(1)
+          .get()
+          .then((value) {
+        if (value.docs.elementAt(0).data() != null) {
+          studentsList.add(StudentModel.fromJson(
+              value.docs.first.data() as Map<String, dynamic>));
+        }
+      });
+    }
+    return studentsList;
   }
 
   Future<bool> trainClass(classId) async {
@@ -260,6 +316,26 @@ class DashboardService extends GetConnect {
     var aa = await classes.add(classModel.toJson());
   }
 
+  addAttendance(List<StudentModel> list) async {
+    String date = DateTime.now().microsecondsSinceEpoch.toString();
+    for (var element in list) {
+      AttendanceModel attendanceModel = AttendanceModel(
+          atdDate: date,
+          atdId: Uuid().v1(),
+          classId: element.classId,
+          stdEmail: element.email,
+          stdId: element.stdId,
+          stdName: element.name,
+          stdPhone: element.phone,
+          stdPhoto: element.photo,
+          stdRollNo: element.rollNo,
+          teacherId: element.teacherId);
+      var aa = await attendance.add(attendanceModel.toJson());
+    }
+
+
+  }
+
   Stream<QuerySnapshot> getClasses() {
     // log("UID ${firebaseAuth.currentUser?.uid ?? "Null"}");
     return classes
@@ -271,6 +347,15 @@ class DashboardService extends GetConnect {
   Stream<QuerySnapshot> getStudentsByClassId(classId) {
     // log("UID ${firebaseAuth.currentUser?.uid ?? "Null"}");
     return students
+        // .orderBy("name", descending: true)
+        .where("teacher_id", isEqualTo: firebaseAuth.currentUser!.uid)
+        .where("class_id", isEqualTo: classId)
+        .snapshots();
+  }
+
+  Stream<QuerySnapshot> getAttendance(classId) {
+    // log("UID ${firebaseAuth.currentUser?.uid ?? "Null"}");
+    return attendance
         // .orderBy("name", descending: true)
         .where("teacher_id", isEqualTo: firebaseAuth.currentUser!.uid)
         .where("class_id", isEqualTo: classId)

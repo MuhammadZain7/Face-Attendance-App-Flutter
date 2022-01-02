@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:sms/Authentication/Binding/auth_binding.dart';
 import 'package:sms/Authentication/Views/login_screen.dart';
 import 'package:sms/Authentication/Views/register_user_screen.dart';
+import 'package:sms/Dashboard/Attendance/attandance.dart';
 import 'package:sms/Dashboard/Classes/classes.dart';
 import 'package:sms/Dashboard/Screens/dashboard_screen.dart';
 import 'package:sms/Dashboard/Students/add_student.dart';
@@ -43,6 +44,12 @@ class AppPages {
     GetPage(
       name: AddStudentScreen.routeName,
       page: () => AddStudentScreen(),
+      binding: DashboardBinding(),
+      preventDuplicates: true,
+    ),
+    GetPage(
+      name: AttendanceScreen.routeName,
+      page: () => AttendanceScreen(),
       binding: DashboardBinding(),
       preventDuplicates: true,
     ),
