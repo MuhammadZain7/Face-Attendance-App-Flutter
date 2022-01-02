@@ -18,13 +18,13 @@ class DashboardScreen extends StatelessWidget {
   final List<Widget> _widgetOptions = <Widget>[
     ClassScreen(),
     Text(
-      'Index 1: Business',
+      'Profile',
       style: optionStyle,
     ),
-    Text(
-      'Index 2: School',
-      style: optionStyle,
-    ),
+    // Text(
+    //   'Index 2: School',
+    //   style: optionStyle,
+    // ),
   ];
 
   void _onItemTapped(int index) {
@@ -51,13 +51,13 @@ class DashboardScreen extends StatelessWidget {
               label: 'Home',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.business),
-              label: 'Business',
+              icon: Icon(Icons.perm_identity),
+              label: 'Profile',
             ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.school),
-              label: 'School',
-            ),
+            // BottomNavigationBarItem(
+            //   icon: Icon(Icons.school),
+            //   label: 'School',
+            // ),
           ],
           currentIndex: _selectedIndex,
           selectedItemColor: Colors.amber[800],

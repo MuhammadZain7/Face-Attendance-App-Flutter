@@ -24,7 +24,9 @@ class StudentsScreen extends StatelessWidget {
   StudentsScreen({Key? key}) : super(key: key);
   final dashCtrl = Get.find<DashboardController>();
   final _formKey = GlobalKey<FormState>();
-  final classId = Get.arguments;
+  final classId = Get.arguments[0];
+  final className = Get.arguments[1];
+  final classCode = Get.arguments[2];
   int? studentLength;
 
   @override
@@ -33,8 +35,8 @@ class StudentsScreen extends StatelessWidget {
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-          title: Text("Class Name"),
-          bottom: TabBar(
+          title: Text(className),
+          bottom: const TabBar(
             tabs: [
               Tab(icon: Icon(Icons.person_outline), text: "Students"),
               Tab(icon: Icon(Icons.camera_alt), text: "Attendance")
@@ -61,7 +63,11 @@ class StudentsScreen extends StatelessWidget {
                         return Card(
                             child: ListTile(
                           leading: Image.network(
-                              dashCtrl.getStudentImageUrl(categoryModel.photo)),
+                            dashCtrl.getStudentImageUrl(categoryModel.photo),
+                            height: 60,
+                            width: 60,
+                            fit: BoxFit.cover,
+                          ),
                           title: Text(categoryModel.name),
                           subtitle: Text(categoryModel.email),
                           trailing: isDeleting
@@ -113,7 +119,7 @@ class StudentsScreen extends StatelessWidget {
                           categories.toList()[index].data());
                       return GetBuilder<DashboardController>(
                           builder: (context) {
-                        var date = DateFormat('yyyy-MM-dd – kk:mm:a').format(
+                        var date = DateFormat('yyyy-MM-dd – KK:mm:a').format(
                             DateTime.fromMicrosecondsSinceEpoch(
                                 int.parse(categoryModel.atdDate)));
 

@@ -22,6 +22,7 @@ class AttendanceModel {
     required this.stdEmail,
     required this.stdPhone,
     required this.stdPhoto,
+    required this.atdKey,
   });
 
   String atdId;
@@ -34,6 +35,7 @@ class AttendanceModel {
   String stdEmail;
   String stdPhone;
   String stdPhoto;
+  String atdKey;
 
   factory AttendanceModel.fromJson(Map<String, dynamic> json) =>
       AttendanceModel(
@@ -47,6 +49,7 @@ class AttendanceModel {
         stdEmail: json["std_email"],
         stdPhone: json["std_phone"],
         stdPhoto: json["std_photo"],
+        atdKey: json["atd_key"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -60,5 +63,6 @@ class AttendanceModel {
         "std_email": stdEmail,
         "std_phone": stdPhone,
         "std_photo": stdPhoto,
+        "atd_key": atdKey,
       };
 }

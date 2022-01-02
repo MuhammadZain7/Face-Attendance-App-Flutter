@@ -103,8 +103,8 @@ class DashboardController extends GetxController {
     return await dashService.getStudentFromIds(identifiedStudents);
   }
 
-  addAttendance(List<StudentModel> attendanceModel) async {
-    return await dashService.addAttendance(attendanceModel);
+  addAttendance(List<StudentModel> attendanceModel,classId) async {
+    return await dashService.addAttendance(attendanceModel,classId);
   }
 
   Stream<QuerySnapshot> getAttendance(classId) {

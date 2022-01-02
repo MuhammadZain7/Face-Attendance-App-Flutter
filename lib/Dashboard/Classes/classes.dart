@@ -37,36 +37,37 @@ class ClassScreen extends StatelessWidget {
                 print('${snapshot.data!.docs.elementAt(index).id}');
 
                 return Card(
-                    child: InkWell(
-                  onTap: () {
-                    Get.toNamed(StudentsScreen.routeName,
-                        arguments: categoryModel.classId);
-                  },
-                  child: GetBuilder<DashboardController>(builder: (_) {
-                    return ListTile(
-                      title: Text(categoryModel.className),
-                      subtitle: Text(categoryModel.classCode),
-                      trailing: isDeleting
-                          ? CircularProgressIndicator()
-                          : IconButton(
-                              onPressed: () async {
-                                isDeleting = true;
-                                dashCtrl.update();
-                                await dashCtrl.deleteClass(
-                                    categoryModel.classId,
-                                    snapshot.data!.docs.elementAt(index).id);
-                                isDeleting = false;
-                                dashCtrl.update();
-                                Fluttertoast.showToast(msg: "Deleted Successfully");
-                              },
-                              icon: Icon(
-                                Icons.delete,
-                                color: Colors.redAccent,
-                              ),
+                    child: GetBuilder<DashboardController>(builder: (_) {
+                  return ListTile(
+                    onTap: () {
+                      Get.toNamed(StudentsScreen.routeName, arguments: [
+                        categoryModel.classId,
+                        categoryModel.className,
+                        categoryModel.classCode
+                      ]);
+                    },
+                    title: Text(categoryModel.className),
+                    subtitle: Text(categoryModel.classCode),
+                    trailing: isDeleting
+                        ? CircularProgressIndicator()
+                        : IconButton(
+                            onPressed: () async {
+                              isDeleting = true;
+                              dashCtrl.update();
+                              await dashCtrl.deleteClass(categoryModel.classId,
+                                  snapshot.data!.docs.elementAt(index).id);
+                              isDeleting = false;
+                              dashCtrl.update();
+                              Fluttertoast.showToast(
+                                  msg: "Deleted Successfully");
+                            },
+                            icon: Icon(
+                              Icons.delete,
+                              color: Colors.redAccent,
                             ),
-                    );
-                  }),
-                ));
+                          ),
+                  );
+                }));
               },
             );
           } else if (snapshot.connectionState == ConnectionState.waiting) {

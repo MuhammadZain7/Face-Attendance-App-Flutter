@@ -16,6 +16,7 @@ import 'package:sms/Models/lp_group_model.dart';
 import 'package:sms/Models/class_model.dart';
 import 'package:sms/Models/student_model.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+import 'package:sms/Utils/constants.dart';
 import 'package:uuid/uuid.dart';
 
 class DashboardService extends GetConnect {
@@ -117,6 +118,7 @@ class DashboardService extends GetConnect {
 
       for (var element in identifyModel) {
         if (element.candidates != null &&
+            element.candidates!.isNotEmpty &&
             element.candidates?.elementAt(0) != null) {
           identifiedStudent.add(element.candidates!.elementAt(0));
         }
@@ -316,24 +318,50 @@ class DashboardService extends GetConnect {
     var aa = await classes.add(classModel.toJson());
   }
 
-  addAttendance(List<StudentModel> list) async {
+  addAttendance(List<StudentModel> list, classId) async {
     String date = DateTime.now().microsecondsSinceEpoch.toString();
+    var now = DateTime.now();
+    var nowKey = "${now.year}_${now.month}_${now.day}";
+
+    List<AttendanceModel> attendanceList = [];
+    await attendance
+        // .orderBy("name", descending: true)
+        .where("teacher_id", isEqualTo: firebaseAuth.currentUser!.uid)
+        .where("class_id", isEqualTo: classId)
+        .get()
+        .then((value) {
+      attendanceList = List.from(value.docs)
+          .map((e) => AttendanceModel.fromJson(e.data()))
+          .toList();
+    });
+    print('${attendanceList.toString()}');
     for (var element in list) {
-      AttendanceModel attendanceModel = AttendanceModel(
-          atdDate: date,
-          atdId: Uuid().v1(),
-          classId: element.classId,
-          stdEmail: element.email,
-          stdId: element.stdId,
-          stdName: element.name,
-          stdPhone: element.phone,
-          stdPhoto: element.photo,
-          stdRollNo: element.rollNo,
-          teacherId: element.teacherId);
-      var aa = await attendance.add(attendanceModel.toJson());
+      List<AttendanceModel> a = attendanceList
+          .where((std) => std.stdId == element.stdId && nowKey == std.atdKey)
+          .toList();
+      if (a.isEmpty) {
+        AttendanceModel attendanceModel = AttendanceModel(
+            atdDate: date,
+            atdId: Uuid().v1(),
+            classId: element.classId,
+            stdEmail: element.email,
+            stdId: element.stdId,
+            stdName: element.name,
+            stdPhone: element.phone,
+            stdPhoto: element.photo,
+            atdKey: nowKey,
+            stdRollNo: element.rollNo,
+            teacherId: element.teacherId);
+        var aa = await attendance.add(attendanceModel.toJson());
+        showSnackBar("Attendance Marked Successfully");
+
+      } else {
+        print('${element.name} Attendance Already Marked');
+        showSnackBar('${element.name} Attendance Already Marked');
+
+
+      }
     }
-
-
   }
 
   Stream<QuerySnapshot> getClasses() {

@@ -59,8 +59,7 @@ class AttendanceScreen extends StatelessWidget {
               if (studentList.isNotEmpty)
                 TextButton(
                     onPressed: () async {
-                      await dashCtrl.addAttendance(studentList);
-                      showSnackBar("Attendance Marked Successfully");
+                      await dashCtrl.addAttendance(studentList, classId);
                       studentList.clear();
                       dashCtrl.update();
                     },
@@ -71,6 +70,8 @@ class AttendanceScreen extends StatelessWidget {
       }),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
+          // await dashCtrl.addAttendance(studentList,classId);
+
           if (image == null) {
             if (kIsWeb) {
               image = await _picker.pickImage(source: ImageSource.gallery);
@@ -88,9 +89,13 @@ class AttendanceScreen extends StatelessWidget {
           } else {
             List<Candidate> identifiedStudents =
                 await dashCtrl.faceIdentification(classId, File(image!.path));
-
-            studentList = await dashCtrl.getStudentFromIds(identifiedStudents);
-            dashCtrl.update();
+            if (identifiedStudents.isNotEmpty) {
+              studentList =
+                  await dashCtrl.getStudentFromIds(identifiedStudents);
+              dashCtrl.update();
+            } else {
+              showSnackBar("No Student Found!");
+            }
           }
         },
         child: Icon(Icons.ac_unit),

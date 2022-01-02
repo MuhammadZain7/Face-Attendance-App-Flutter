@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      title: "SMS",
+      title: "Attendance System",
       debugShowCheckedModeBanner: false,
       onInit: () {
         Get.put(AuthBinding());
