@@ -5,6 +5,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:sms/Dashboard/Attendance/attandance.dart';
+import 'package:sms/Dashboard/Attendance/view_attendance_by_std.dart';
 import 'package:sms/Dashboard/Students/add_student.dart';
 import 'package:sms/Dashboard/dashboard_controller.dart';
 import 'package:sms/Models/attendance_model.dart';
@@ -59,14 +60,17 @@ class StudentsScreen extends StatelessWidget {
                           builder: (context) {
                         return Card(
                             child: ListTile(
+                          onTap: () {
+                            Get.toNamed(ViewAttendanceByStd.routeName,
+                                arguments: categoryModel);
+                          },
                           leading: CachedNetworkImage(
                             imageUrl: dashCtrl
                                 .getStudentImageUrl(categoryModel.photo),
-                            placeholder: (context, url) =>
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: CircularProgressIndicator(),
-                                ),
+                            placeholder: (context, url) => Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: CircularProgressIndicator(),
+                            ),
                             width: 60,
                             height: 60,
                           ),
@@ -126,46 +130,22 @@ class StudentsScreen extends StatelessWidget {
                                 int.parse(categoryModel.atdDate)));
 
                         return Card(
+
                             child: ListTile(
                           leading: CachedNetworkImage(
                             imageUrl: dashCtrl
                                 .getStudentImageUrl(categoryModel.stdPhoto),
-                            placeholder: (context, url) =>
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: CircularProgressIndicator(),
-                                ),
+                            placeholder: (context, url) => Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: CircularProgressIndicator(),
+                            ),
                             width: 60,
                             height: 60,
                           ),
                           title: Text(categoryModel.stdName),
-                          subtitle: Text("${categoryModel.stdEmail}\n${date}"),
-                          trailing: Icon(
-                            Icons.done,
-                            color: Colors.green,
-                          ),
-                          // trailing: isDeleting
-                          //     ? CircularProgressIndicator()
-                          //     : IconButton(
-                          //         onPressed: () async {
-                          //           isDeleting = true;
-                          //           dashCtrl.update();
-                          //           await dashCtrl.deleteStudentFromClass(
-                          //               categoryModel.classId,
-                          //               categoryModel.stdId,
-                          //               snapshot.data!.docs
-                          //                   .elementAt(index)
-                          //                   .id);
-                          //           isDeleting = false;
-                          //           dashCtrl.update();
-                          //           Fluttertoast.showToast(
-                          //               msg: "Deleted Successfully");
-                          //         },
-                          //         icon: Icon(
-                          //           Icons.delete,
-                          //           color: Colors.redAccent,
-                          //         ),
-                          //       ),
+                          subtitle: Text("${categoryModel.stdEmail}\n$date"),
+                          trailing: Image.asset("assets/images/ok.png"),
+
                         ));
                       });
                     },

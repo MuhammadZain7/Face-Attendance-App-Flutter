@@ -6,13 +6,15 @@ import 'package:flutter/material.dart';
 class ProfileWidget extends StatelessWidget {
   final String? imagePath;
   final bool isEdit;
-  final VoidCallback onClicked;
+  final VoidCallback? onClicked;
+  final double size;
 
   const ProfileWidget({
     Key? key,
     this.imagePath,
+    this.size=120,
     this.isEdit = false,
-    required this.onClicked,
+      this.onClicked,
   }) : super(key: key);
 
   @override
@@ -43,8 +45,8 @@ class ProfileWidget extends StatelessWidget {
                       child: Ink.image(
                         image: NetworkImage(imagePath ?? ""),
                         fit: BoxFit.cover,
-                        width: 128,
-                        height: 128,
+                        width: size,
+                        height: size,
                         child: InkWell(onTap: onClicked),
                       ),
                     )
@@ -53,8 +55,8 @@ class ProfileWidget extends StatelessWidget {
                       child: Ink.image(
                         image: Image.file(File(imagePath ?? "")).image,
                         fit: BoxFit.cover,
-                        width: 128,
-                        height: 128,
+                        width: size,
+                        height: size,
                         child: InkWell(onTap: onClicked),
                       ),
                     )
@@ -63,8 +65,8 @@ class ProfileWidget extends StatelessWidget {
                   child: Ink.image(
                     image: NetworkImage(imagePath ?? ""),
                     fit: BoxFit.cover,
-                    width: 128,
-                    height: 128,
+                    width: size,
+                    height: size,
                     child: InkWell(onTap: onClicked),
                   ),
                 )
@@ -73,8 +75,8 @@ class ProfileWidget extends StatelessWidget {
               child: Ink.image(
                 image: const AssetImage("assets/images/profile_pic.png"),
                 fit: BoxFit.cover,
-                width: 128,
-                height: 128,
+                width: size,
+                height: size,
                 child: InkWell(onTap: onClicked),
               ),
             ),

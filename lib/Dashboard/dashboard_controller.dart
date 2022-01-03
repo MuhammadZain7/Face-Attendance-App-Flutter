@@ -7,6 +7,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sms/Dashboard/dashboard_service.dart';
+import 'package:sms/Models/attendance_model.dart';
 import 'package:sms/Models/detection_model.dart';
 import 'package:sms/Models/identify_model.dart';
 import 'package:sms/Models/student_model.dart';
@@ -103,8 +104,8 @@ class DashboardController extends GetxController {
     return await dashService.getStudentFromIds(identifiedStudents);
   }
 
-  addAttendance(List<StudentModel> attendanceModel,classId) async {
-    return await dashService.addAttendance(attendanceModel,classId);
+  addAttendance(List<StudentModel> attendanceModel, classId) async {
+    return await dashService.addAttendance(attendanceModel, classId);
   }
 
   Stream<QuerySnapshot> getAttendance(classId) {
@@ -113,6 +114,10 @@ class DashboardController extends GetxController {
 
   Future<List<DetectionModel>> detectFacesFromImage(File image) async {
     return await dashService.detectFacesFromImage(image);
+  }
+
+  Future<List<AttendanceModel>> getAttendanceByStd(classId, stdId) async {
+    return await dashService.getAttendanceByStd(classId, stdId);
   }
 
   @override

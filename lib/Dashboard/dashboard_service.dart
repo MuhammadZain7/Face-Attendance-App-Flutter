@@ -354,14 +354,28 @@ class DashboardService extends GetConnect {
             teacherId: element.teacherId);
         var aa = await attendance.add(attendanceModel.toJson());
         showSnackBar("Attendance Marked Successfully");
-
       } else {
         print('${element.name} Attendance Already Marked');
         showSnackBar('${element.name} Attendance Already Marked');
-
-
       }
     }
+  }
+
+  Future<List<AttendanceModel>> getAttendanceByStd(classId, stdId) async {
+    List<AttendanceModel> attendanceList = [];
+
+    await attendance
+        // .orderBy("name", descending: true)
+        .where("teacher_id", isEqualTo: firebaseAuth.currentUser!.uid)
+        .where("class_id", isEqualTo: classId)
+        .where("std_id", isEqualTo: stdId)
+        .get()
+        .then((value) {
+      attendanceList = List.from(value.docs)
+          .map((e) => AttendanceModel.fromJson(e.data()))
+          .toList();
+    });
+    return attendanceList;
   }
 
   Stream<QuerySnapshot> getClasses() {

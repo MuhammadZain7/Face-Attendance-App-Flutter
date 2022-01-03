@@ -9,6 +9,8 @@ class ColorResources {
   static const Color COLOR_BLUE = Color(0xff4167B0);
   static const Color COLOR_LIGHT_GREY = Color(0xffEDEDED);
   static const Color SPLASH_BACK = Color(0xffFAFAFA);
+  static const Color RED_HALF_TRANSPARENT = Color(0x3bff4d4d);
+  static const Color GREEN_HALF_TRANSPARENT = Color(0xc65bd741);
 
 
 
