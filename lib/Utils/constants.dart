@@ -96,13 +96,14 @@ Future logoutDialog(BuildContext context) async {
               child: const Text('Yes'),
               onPressed: () async {
                 logOut();
-                Get.offAllNamed(LoginScreen.routeName );
+                Get.offAllNamed(LoginScreen.routeName);
               },
             ),
           ],
         );
       });
 }
+
 
 TeacherModel? getUserFromStorage() {
   if (GetStorage().read("user") != null) {

@@ -21,7 +21,9 @@ class TeacherProfileScreen extends StatelessWidget {
           SizedBox(
             height: 20,
           ),
-          ProfileWidget(),
+          ProfileWidget(onClicked: () {
+
+          },),
           SizedBox(
             height: 20,
           ),

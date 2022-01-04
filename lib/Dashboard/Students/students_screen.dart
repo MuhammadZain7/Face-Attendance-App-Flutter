@@ -11,6 +11,7 @@ import 'package:sms/Dashboard/dashboard_controller.dart';
 import 'package:sms/Models/attendance_model.dart';
 import 'package:sms/Models/class_model.dart';
 import 'package:sms/Models/student_model.dart';
+import 'package:sms/Utils/color_resources.dart';
 
 class StudentsScreen extends StatelessWidget {
   static const String routeName = "/student_screen";
@@ -37,7 +38,7 @@ class StudentsScreen extends StatelessWidget {
           bottom: const TabBar(
             tabs: [
               Tab(icon: Icon(Icons.person_outline), text: "Students"),
-              Tab(icon: Icon(Icons.camera_alt), text: "Attendance")
+              Tab(icon: Icon(Icons.today_outlined), text: "Today Attendance")
             ],
           ),
         ),
@@ -56,8 +57,7 @@ class StudentsScreen extends StatelessWidget {
                     itemBuilder: (context, index) {
                       StudentModel categoryModel = StudentModel.fromJson(
                           categories.toList()[index].data());
-                      return GetBuilder<DashboardController>(
-                          builder: (context) {
+                      return GetBuilder<DashboardController>(builder: (_) {
                         return Card(
                             child: ListTile(
                           onTap: () {
@@ -80,18 +80,12 @@ class StudentsScreen extends StatelessWidget {
                               ? CircularProgressIndicator()
                               : IconButton(
                                   onPressed: () async {
-                                    isDeleting = true;
-                                    dashCtrl.update();
-                                    await dashCtrl.deleteStudentFromClass(
-                                        categoryModel.classId,
-                                        categoryModel.stdId,
+                                    studentDeleteDialog(
+                                        context,
+                                        categoryModel,
                                         snapshot.data!.docs
                                             .elementAt(index)
                                             .id);
-                                    isDeleting = false;
-                                    dashCtrl.update();
-                                    Fluttertoast.showToast(
-                                        msg: "Deleted Successfully");
                                   },
                                   icon: const Icon(
                                     Icons.delete,
@@ -111,7 +105,7 @@ class StudentsScreen extends StatelessWidget {
               },
             ),
             StreamBuilder<QuerySnapshot>(
-              stream: dashCtrl.getAttendance(classId),
+              stream: dashCtrl.getAttendanceByDate(classId, DateTime.now()),
               builder: (context, snapshot) {
                 if (snapshot.data != null &&
                     snapshot.hasData &&
@@ -130,7 +124,6 @@ class StudentsScreen extends StatelessWidget {
                                 int.parse(categoryModel.atdDate)));
 
                         return Card(
-
                             child: ListTile(
                           leading: CachedNetworkImage(
                             imageUrl: dashCtrl
@@ -144,8 +137,10 @@ class StudentsScreen extends StatelessWidget {
                           ),
                           title: Text(categoryModel.stdName),
                           subtitle: Text("${categoryModel.stdEmail}\n$date"),
-                          trailing: Image.asset("assets/icons/ok.png"),
-
+                          trailing: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Image.asset("assets/icons/ok.png"),
+                          ),
                         ));
                       });
                     },
@@ -196,5 +191,44 @@ class StudentsScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Future studentDeleteDialog(
+      BuildContext context, StudentModel studentModel, id) async {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text("Delete Student!"),
+            content: Text(
+                "Are you sure want to Delete ${studentModel.name} from this class? if your remove student ${studentModel.name}, so all attendance record of ${studentModel.name} will automatically delete."),
+            actions: <Widget>[
+              FlatButton(
+                color: ColorResources.primaryColor,
+                textColor: Colors.white,
+                child: const Text('No'),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+              FlatButton(
+                textColor: Colors.redAccent,
+                child: const Text('Yes'),
+                onPressed: () async {
+                  isDeleting = true;
+                  dashCtrl.update();
+                  await dashCtrl.deleteStudentFromClass(
+                      studentModel.classId,
+                      studentModel.stdId,
+                      id);
+                  isDeleting = false;
+                  dashCtrl.update();
+                  Fluttertoast.showToast(msg: "Deleted Successfully");
+                  Get.back();
+                },
+              ),
+            ],
+          );
+        });
   }
 }

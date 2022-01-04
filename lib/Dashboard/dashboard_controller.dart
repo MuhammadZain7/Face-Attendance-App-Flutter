@@ -112,6 +112,10 @@ class DashboardController extends GetxController {
     return dashService.getAttendance(classId);
   }
 
+  Stream<QuerySnapshot> getAttendanceByDate(classId, DateTime dateTime) {
+    return dashService.getAttendanceByDate(classId, dateTime);
+  }
+
   Future<List<DetectionModel>> detectFacesFromImage(File image) async {
     return await dashService.detectFacesFromImage(image);
   }

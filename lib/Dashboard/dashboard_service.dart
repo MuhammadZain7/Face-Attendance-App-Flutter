@@ -452,6 +452,16 @@ class DashboardService extends GetConnect {
         .snapshots();
   }
 
+  Stream<QuerySnapshot> getAttendanceByDate(classId, DateTime dateTime) {
+    String dateKey = "${dateTime.year}_${dateTime.month}_${dateTime.day}";
+    return attendance
+        // .orderBy("name", descending: true)
+        .where("teacher_id", isEqualTo: firebaseAuth.currentUser!.uid)
+        .where("class_id", isEqualTo: classId)
+        .where("atd_key", isEqualTo: dateKey)
+        .snapshots();
+  }
+
   Future<String?> uploadFile(File file, String stdId) async {
     try {
       if (kIsWeb) {
