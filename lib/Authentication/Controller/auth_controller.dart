@@ -22,31 +22,36 @@ class AuthController extends GetxController {
   bool isLoading = false;
   final _fireStore = FirebaseFirestore.instance;
   FirebaseAuth auth = FirebaseAuth.instance;
-  CollectionReference teachers = FirebaseFirestore.instance.collection('teachers');
+  CollectionReference teachers =
+      FirebaseFirestore.instance.collection('teachers');
 
   @override
   void onInit() {
     super.onInit();
     if (auth.currentUser?.uid != null) {
       user = getUserFromStorage();
-      WidgetsBinding.instance!
-          .addPostFrameCallback((_) => Get.offAndToNamed(DashboardScreen.routeName));
+      WidgetsBinding.instance!.addPostFrameCallback(
+          (_) => Get.offAllNamed(DashboardScreen.routeName));
     }
   }
 
   getUser(email, password) async {
-    CollectionReference users = _fireStore.collection('users');
-    QuerySnapshot user = await users
+    QuerySnapshot user = await teachers
         .where("email", isEqualTo: email)
         .where("password", isEqualTo: password)
         .get();
-    log('${user.docs}');
+    log('User Doc ${user.docs}');
+    if (user.docs.isEmpty) {
+      showSnackBar("User Data Not Found");
+      logOut();
+      return;
+    }
 
     TeacherModel userModel =
         TeacherModel.fromJson(user.docs.first.data() as Map<String, dynamic>);
     setUser(userModel);
     setKey(auth.currentUser!.uid);
-    Get.offNamed(DashboardScreen.routeName);
+    Get.offAllNamed(DashboardScreen.routeName);
   }
 
   startLoading() {
@@ -64,6 +69,7 @@ class AuthController extends GetxController {
       UserCredential userCredential = await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email, password: password);
       // String token = userCredential.credential!.token.toString();
+
       getUser(email, password);
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
@@ -76,7 +82,7 @@ class AuthController extends GetxController {
     }
   }
 
-  registerUser(name, email, phone , password) async {
+  registerUser(name, email, phone, password) async {
     try {
       UserCredential userCredential = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(email: email, password: password);
@@ -87,7 +93,10 @@ class AuthController extends GetxController {
           password: password,
           status: "enable",
           timeStamp: DateTime.now().microsecondsSinceEpoch);
-      teachers.doc(userCredential.user!.uid).set(userModel.toJson()).then((value) {
+      teachers
+          .doc(userCredential.user!.uid)
+          .set(userModel.toJson())
+          .then((value) {
         setKey(userModel.id);
         setUser(userModel);
         Get.offNamed(DashboardScreen.routeName);
@@ -120,6 +129,7 @@ class AuthController extends GetxController {
   }
 
   void logOut() {
+    FirebaseAuth.instance.signOut();
     GetStorage().remove("api_key");
     GetStorage().remove("user");
     GetStorage().erase();

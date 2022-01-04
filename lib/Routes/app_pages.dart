@@ -5,6 +5,7 @@ import 'package:sms/Authentication/Views/register_user_screen.dart';
 import 'package:sms/Dashboard/Attendance/attandance.dart';
 import 'package:sms/Dashboard/Attendance/view_attendance_by_std.dart';
 import 'package:sms/Dashboard/Classes/classes.dart';
+import 'package:sms/Dashboard/Profile/teacher_profile_screen.dart';
 import 'package:sms/Dashboard/Screens/dashboard_screen.dart';
 import 'package:sms/Dashboard/Students/add_student.dart';
 import 'package:sms/Dashboard/Students/students_screen.dart';
@@ -57,6 +58,12 @@ class AppPages {
     GetPage(
       name: ViewAttendanceByStd.routeName,
       page: () => ViewAttendanceByStd(),
+      binding: DashboardBinding(),
+      preventDuplicates: true,
+    ),
+    GetPage(
+      name: TeacherProfileScreen.routeName,
+      page: () => TeacherProfileScreen(),
       binding: DashboardBinding(),
       preventDuplicates: true,
     ),

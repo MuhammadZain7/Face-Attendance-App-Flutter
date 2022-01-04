@@ -144,7 +144,7 @@ class StudentsScreen extends StatelessWidget {
                           ),
                           title: Text(categoryModel.stdName),
                           subtitle: Text("${categoryModel.stdEmail}\n$date"),
-                          trailing: Image.asset("assets/images/ok.png"),
+                          trailing: Image.asset("assets/icons/ok.png"),
 
                         ));
                       });
@@ -171,7 +171,7 @@ class StudentsScreen extends StatelessWidget {
               },
               backgroundColor: Colors.white,
               child: Image.asset(
-                "assets/images/face.png",
+                "assets/icons/take_attend.png",
                 width: 40,
                 height: 40,
               ),
@@ -184,7 +184,12 @@ class StudentsScreen extends StatelessWidget {
               onPressed: () {
                 Get.toNamed(AddStudentScreen.routeName, arguments: classId);
               },
-              child: const Icon(Icons.add),
+              backgroundColor: Colors.white,
+              child: Image.asset(
+                "assets/icons/add.png",
+                width: 40,
+                height: 40,
+              ),
               heroTag: null,
             ),
           ],

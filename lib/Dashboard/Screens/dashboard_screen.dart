@@ -1,7 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:sms/Authentication/Views/login_screen.dart';
 import 'package:sms/Dashboard/Classes/classes.dart';
+import 'package:sms/Dashboard/Profile/teacher_profile_screen.dart';
+import 'package:sms/Utils/constants.dart';
 import 'package:sms/Utils/dimensions.dart';
 
 import '../dashboard_controller.dart';
@@ -17,10 +20,7 @@ class DashboardScreen extends StatelessWidget {
       TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
   final List<Widget> _widgetOptions = <Widget>[
     ClassScreen(),
-    Text(
-      'Profile',
-      style: optionStyle,
-    ),
+    TeacherProfileScreen(),
     // Text(
     //   'Index 2: School',
     //   style: optionStyle,
@@ -37,6 +37,7 @@ class DashboardScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Attendance System'),
+
       ),
       body: GetBuilder<DashboardController>(builder: (context) {
         return Center(

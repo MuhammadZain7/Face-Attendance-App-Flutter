@@ -144,7 +144,6 @@ class AddStudentScreen extends StatelessWidget {
 
                                 isSubmitLoading = false;
                                 dashCtrl.update();
-                                Navigator.pop(context);
                               }
                             },
                           ),

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -38,7 +40,11 @@ class _ViewAttendanceByStdState extends State<ViewAttendanceByStd> {
     loadAttendance();
     DateTime now = DateTime.now();
     currentSelectedMonth = DateTime(now.year, now.month + 1, 0);
-    getSundayOfMonth(currentSelectedMonth);
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      getSundayOfMonth(currentSelectedMonth);
+
+      // Add Your Code here.
+    });
 
     super.initState();
   }
@@ -47,11 +53,13 @@ class _ViewAttendanceByStdState extends State<ViewAttendanceByStd> {
     _listAttendance = await dashCtrl.getAttendanceByStd(
         _studentModel.classId, _studentModel.stdId);
     isLoading = false;
-
+    log("After Load Attend Update");
     dashCtrl.update();
   }
 
   getSundayOfMonth(DateTime dateTime) {
+    attendanceCountCurrentMonth = 0;
+    sundayCountCurrentMonth = 0;
     int count = 0;
     for (int i = 1; i <= dateTime.day; i++) {
       if (DateTime(dateTime.year, dateTime.month, i).weekday ==
@@ -62,7 +70,8 @@ class _ViewAttendanceByStdState extends State<ViewAttendanceByStd> {
     print('Total Days ${dateTime.day} Sunday $count');
 
     sundayCountCurrentMonth = count;
-    Future.delayed(Duration(seconds: 1), () {
+    Future.delayed(const Duration(seconds: 1), () {
+      log("After Get Sunday Update");
       dashCtrl.update();
     });
   }
@@ -79,7 +88,6 @@ class _ViewAttendanceByStdState extends State<ViewAttendanceByStd> {
             onClicked: () {
               Get.back();
             },
-
           ),
         ),
         body: GetBuilder<DashboardController>(builder: (_) {
@@ -94,15 +102,18 @@ class _ViewAttendanceByStdState extends State<ViewAttendanceByStd> {
                       calendarFormat: _calendarFormat,
                       onFormatChanged: (format) {
                         _calendarFormat = format;
+                        log("Format Change Update");
+
                         dashCtrl.update();
                       },
                       onPageChanged: (focusedDay) {
                         focusDate = focusedDay;
                         attendanceCountCurrentMonth = 0;
-                        sundayCountCurrentMonth=0;
+                        sundayCountCurrentMonth = 0;
                         currentSelectedMonth =
                             DateTime(focusedDay.year, focusedDay.month + 1, 0);
                         getSundayOfMonth(currentSelectedMonth);
+                        log("Page Change Update");
                         dashCtrl.update();
                       },
                       calendarBuilders: CalendarBuilders(
@@ -113,37 +124,15 @@ class _ViewAttendanceByStdState extends State<ViewAttendanceByStd> {
                             return Center(
                               child: Text(
                                 text,
-                                style: TextStyle(color: Colors.red),
+                                style: const TextStyle(color: Colors.red),
                               ),
                             );
                           }
                         },
                         defaultBuilder: (context, day, focusedDay) {
-                          if (day.weekday == DateTime.sunday) {
-                            return Center(
-                              child: Text(
-                                day.day.toString(),
-                                style: TextStyle(color: Colors.red),
-                              ),
-                            );
-                          } else {
-                            String dayKey =
-                                "${day.year}_${day.month}_${day.day}";
-                            List<AttendanceModel> a = _listAttendance
-                                .where((std) => dayKey == std.atdKey)
-                                .toList();
-                            if (a.isNotEmpty) {
-                              ++attendanceCountCurrentMonth;
-                              // print('default  ${attendanceCountCurrentMonth.value}');
-                              return textDateWidget(
-                                  day, day.day.toString(), "present");
-                            } else {
-                              return textDateWidget(
-                                  day, day.day.toString(), "absent");
-                            }
+                          if (focusDate.month != day.month) {
+                            return null;
                           }
-                        },
-                        todayBuilder: (context, day, focusedDay) {
                           if (day.weekday == DateTime.sunday) {
                             return Center(
                               child: Text(
@@ -159,7 +148,37 @@ class _ViewAttendanceByStdState extends State<ViewAttendanceByStd> {
                                 .toList();
                             if (a.isNotEmpty) {
                               ++attendanceCountCurrentMonth;
-                              // print('today  ${attendanceCountCurrentMonth.value}');
+                              print(
+                                  'default ${day.day}  ${attendanceCountCurrentMonth}');
+                              return textDateWidget(
+                                  day, day.day.toString(), "present");
+                            } else {
+                              return textDateWidget(
+                                  day, day.day.toString(), "absent");
+                            }
+                          }
+                        },
+                        todayBuilder: (context, day, focusedDay) {
+                          if (focusDate.month != day.month) {
+                            return null;
+                          }
+                          if (day.weekday == DateTime.sunday) {
+                            return Center(
+                              child: Text(
+                                day.day.toString(),
+                                style: const TextStyle(color: Colors.red),
+                              ),
+                            );
+                          } else {
+                            String dayKey =
+                                "${day.year}_${day.month}_${day.day}";
+                            List<AttendanceModel> a = _listAttendance
+                                .where((std) => dayKey == std.atdKey)
+                                .toList();
+                            if (a.isNotEmpty) {
+                              ++attendanceCountCurrentMonth;
+                              print(
+                                  'today ${day.day} ${attendanceCountCurrentMonth}');
                               return textDateWidget(
                                   day, day.day.toString(), "present");
                             } else {
@@ -178,7 +197,7 @@ class _ViewAttendanceByStdState extends State<ViewAttendanceByStd> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
+                      const Text(
                         "Current Month Attendance",
                         style: TextStyle(
                             fontWeight: FontWeight.w900, fontSize: 20),
@@ -189,14 +208,14 @@ class _ViewAttendanceByStdState extends State<ViewAttendanceByStd> {
                         children: [
                           Text(
                             "Present ${attendanceCountCurrentMonth}",
-                            style: TextStyle(
+                            style: const TextStyle(
                                 fontWeight: FontWeight.w900,
                                 fontSize: 20,
                                 color: Colors.green),
                           ),
                           Text(
                             "Absent ${(currentSelectedMonth.day - sundayCountCurrentMonth) - attendanceCountCurrentMonth}",
-                            style: TextStyle(
+                            style: const TextStyle(
                                 fontWeight: FontWeight.w900,
                                 fontSize: 20,
                                 color: Colors.redAccent),

@@ -1,5 +1,11 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
+import 'package:sms/Authentication/Views/login_screen.dart';
+import 'package:sms/Models/teacher.dart';
+
+import 'color_resources.dart';
 
 const String baseURL = "https://cll.softologics.com/API/";
 
@@ -24,6 +30,13 @@ Map getFeedbackMapping() {
     "5": "Other",
     "6": "Sales Done"
   };
+}
+
+void logOut() {
+  FirebaseAuth.instance.signOut();
+  GetStorage().remove("api_key");
+  GetStorage().remove("user");
+  GetStorage().erase();
 }
 
 Map getOpenFeedbackMapping() {
@@ -60,6 +73,41 @@ Future<String?> pickImageDialog(BuildContext context) async {
       },
       context: context);
   return selected;
+}
+
+Future logoutDialog(BuildContext context) async {
+  return showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Logout!"),
+          content: const Text("Are you sure want to Logout?"),
+          actions: <Widget>[
+            FlatButton(
+              color: ColorResources.primaryColor,
+              textColor: Colors.white,
+              child: const Text('No'),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+            FlatButton(
+              textColor: ColorResources.primaryColor,
+              child: const Text('Yes'),
+              onPressed: () async {
+                logOut();
+                Get.offAllNamed(LoginScreen.routeName );
+              },
+            ),
+          ],
+        );
+      });
+}
+
+TeacherModel? getUserFromStorage() {
+  if (GetStorage().read("user") != null) {
+    return TeacherModel.fromJson(GetStorage().read("user"));
+  }
 }
 
 String getMonthName(int i) {

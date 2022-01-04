@@ -48,8 +48,11 @@ dependencies:
   uuid: ^3.0.5
   image_picker: ^0.8.4+4
   intl: ^0.17.0
+  #  //TODO  NOT SUPPORTED WEB VERSION
   cached_network_image: ^3.2.0
   table_calendar: ^3.0.3
+  #  //TODO IMAGE COMPRESSOR NOT SUPPORTED WEB VERSION
+  flutter_image_compress: ^1.1.0
 
 dev_dependencies:
   flutter_test:

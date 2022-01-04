@@ -41,11 +41,18 @@ class AttendanceScreen extends StatelessWidget {
                         width: double.infinity,
                       )
                     : Image.asset(
-                        "assets/images/capture.png",
+                        "assets/icons/capture.png",
                         height: 200,
                       ),
               ),
-              Divider(),
+              const Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Text(
+                  "Pick or Capture Image to Take Attendance, one image can take maximum 10 Students.",
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              const Divider(),
               if (studentList.isNotEmpty)
                 ListView.builder(
                   shrinkWrap: true,
@@ -102,30 +109,44 @@ class AttendanceScreen extends StatelessWidget {
                       dashCtrl.update();
                     },
                     heroTag: null,
-                    child: Icon(Icons.camera),
+                    backgroundColor: Colors.white,
+                    child: Image.asset(
+                      "assets/icons/take_img.png",
+                      width: 40,
+                      height: 40,
+                    ),
                   ),
                   SizedBox(
                     height: 10,
                   ),
                   FloatingActionButton(
                     onPressed: () async {
-                      isLoading = true;
-                      dashCtrl.update();
-                      List<Candidate> identifiedStudents = await dashCtrl
-                          .faceIdentification(classId, File(image!.path));
-                      if (identifiedStudents.isNotEmpty) {
-                        studentList = await dashCtrl
-                            .getStudentFromIds(identifiedStudents);
+                      if (image != null) {
+                        isLoading = true;
+                        dashCtrl.update();
+                        List<Candidate> identifiedStudents = await dashCtrl
+                            .faceIdentification(classId, File(image!.path));
+                        if (identifiedStudents.isNotEmpty) {
+                          studentList = await dashCtrl
+                              .getStudentFromIds(identifiedStudents);
+                          dashCtrl.update();
+                        } else {
+                          showSnackBar("No Student Found!");
+                        }
+                        isLoading = false;
                         dashCtrl.update();
                       } else {
-                        showSnackBar("No Student Found!");
+                        Fluttertoast.showToast(msg: "First Select Image");
                       }
-                      isLoading = false;
-                      dashCtrl.update();
                     },
-                    child: Icon(Icons.search),
+                    backgroundColor: Colors.white,
+                    child: Image.asset(
+                      "assets/icons/face.png",
+                      width: 40,
+                      height: 40,
+                    ),
                     heroTag: null,
-                  )
+                  ),
                 ],
               );
       }),

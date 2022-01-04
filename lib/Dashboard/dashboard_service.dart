@@ -6,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
@@ -18,6 +19,8 @@ import 'package:sms/Models/student_model.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:sms/Utils/constants.dart';
 import 'package:uuid/uuid.dart';
+
+import 'package:path_provider/path_provider.dart' as path_provider;
 
 class DashboardService extends GetConnect {
   String baseURL = "https://fazecam2.cognitiveservices.azure.com/face/v1.0";
@@ -204,8 +207,19 @@ class DashboardService extends GetConnect {
       return List.from(jsonDecode(response.body))
           .map((e) => DetectionModel.fromJson(e))
           .toList();
+    } else if (response.statusCode == 403) {
+      Fluttertoast.showToast(
+          msg: "Out of call volume quota. Quota will be replenished in 2 days.",
+          toastLength: Toast.LENGTH_LONG);
+      return [];
+    } else if (response.statusCode == 429) {
+      Fluttertoast.showToast(
+          msg: "Rate limit is exceeded. Try again in 26 seconds.",
+          toastLength: Toast.LENGTH_LONG);
+      return [];
     } else {
-      Fluttertoast.showToast(msg: "Error Delete Class");
+      Fluttertoast.showToast(
+          msg: "Error in Face", toastLength: Toast.LENGTH_LONG);
       return [];
     }
   }
@@ -279,9 +293,22 @@ class DashboardService extends GetConnect {
   }
 
   addStudentInClass(classId, stdName, email, phone, rollNo, File photo) async {
+    List<DetectionModel> faceList = await detectFacesFromImage(photo);
+    if (faceList.isEmpty) {
+      Fluttertoast.showToast(
+          msg: "No Face Found", toastLength: Toast.LENGTH_LONG);
+      return;
+    }
+    if (faceList.length > 1) {
+      Fluttertoast.showToast(
+          msg: "Multiple Face Detected Kindly Add 1 Face",
+          toastLength: Toast.LENGTH_LONG);
+      return;
+    }
     String? stdID = await addPerson(classId, stdName);
     if (stdID == null) {
-      Fluttertoast.showToast(msg: "Student Id Null");
+      Fluttertoast.showToast(
+          msg: "Student Id Null", toastLength: Toast.LENGTH_LONG);
       log("Student Id Null");
       return;
     }
@@ -292,7 +319,7 @@ class DashboardService extends GetConnect {
 
       return;
     }
-    String? photoUrl = await uploadFile(photo, stdID);
+    String? photoUrl = await uploadFile(await compressFile(photo), stdID);
     if (photoUrl == null) {
       Fluttertoast.showToast(msg: "Image Upload Error");
       log("Image Upload Error");
@@ -312,6 +339,27 @@ class DashboardService extends GetConnect {
         createdDate: date);
     var aa = await students.add(studentModel.toJson());
     Fluttertoast.showToast(msg: "Added Successfully");
+  }
+
+  Future<File> compressFile(File file) async {
+    final dir = await path_provider.getTemporaryDirectory();
+    final targetPath =
+        dir.absolute.path + "/${DateTime.now().microsecondsSinceEpoch}temp.jpg";
+    var result = await FlutterImageCompress.compressAndGetFile(
+      file.absolute.path,
+      targetPath,
+      quality: 88,
+
+      // rotate: 180,
+    );
+    Fluttertoast.showToast(
+        msg:
+            "Before Size ${file.lengthSync()}  XXX After Size ${result!.lengthSync()}",
+        toastLength: Toast.LENGTH_LONG);
+    log("Before Size ${file.lengthSync()}");
+    log("After Size ${result.lengthSync()}");
+
+    return result;
   }
 
   addClass(ClassModel classModel) async {
