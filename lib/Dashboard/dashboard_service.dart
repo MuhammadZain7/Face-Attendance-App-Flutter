@@ -113,7 +113,53 @@ class DashboardService extends GetConnect {
       log('Identify Class $e');
     });
     print(
-        '$classId XXX ${response.statusCode} XXX Error Identify Class XXX ${response.body}');
+        '$classId XXX ${response.statusCode} XXX   Identify Class XXX ${response.body}');
+    if (response.statusCode == 200) {
+      var a = jsonDecode(response.body);
+      List<IdentifyModel> identifyModel =
+          List.from(a).map((e) => IdentifyModel.fromJson(e)).toList();
+
+      for (var element in identifyModel) {
+        if (element.candidates != null &&
+            element.candidates!.isNotEmpty &&
+            element.candidates?.elementAt(0) != null) {
+          identifiedStudent.add(element.candidates!.elementAt(0));
+        }
+      }
+      return identifiedStudent;
+    } else {
+      Fluttertoast.showToast(msg: "Error Identify Class");
+      return [];
+    }
+  }
+
+  Future<List<Candidate>> identifyImageForAddPerson(
+      classId, List<DetectionModel> detectedFace) async {
+    List<Candidate> identifiedStudent = [];
+
+    List<String> faceIds = [];
+    for (var element in detectedFace) {
+      faceIds.add(element.faceId);
+    }
+
+    http.Response response = await http
+        .post(
+      Uri.parse('$baseURL/identify'),
+      headers: {
+        'Ocp-Apim-Subscription-Key': faceApiKey,
+        "Content-Type": "application/json"
+      },
+      body: jsonEncode({
+        "faceIds": faceIds,
+        "personGroupId": "",
+        "largePersonGroupId": classId
+      }),
+    )
+        .catchError((e) {
+      log('Identify Class $e');
+    });
+    print(
+        '$classId XXX ${response.statusCode} XXX   Identify Class XXX ${response.body}');
     if (response.statusCode == 200) {
       var a = jsonDecode(response.body);
       List<IdentifyModel> identifyModel =
@@ -305,6 +351,16 @@ class DashboardService extends GetConnect {
           toastLength: Toast.LENGTH_LONG);
       return;
     }
+    List<Candidate> identifyFaces =
+        await identifyImageForAddPerson(classId, faceList);
+
+    if (identifyFaces.isNotEmpty) {
+      Fluttertoast.showToast(
+          msg: "This Student is already have in this class",
+          toastLength: Toast.LENGTH_LONG);
+      return;
+    }
+
     String? stdID = await addPerson(classId, stdName);
     if (stdID == null) {
       Fluttertoast.showToast(

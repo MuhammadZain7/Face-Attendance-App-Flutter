@@ -101,11 +101,13 @@ class _ViewAttendanceByStdState extends State<ViewAttendanceByStd> {
                       focusedDay: focusDate,
                       calendarFormat: _calendarFormat,
                       onFormatChanged: (format) {
-                        _calendarFormat = format;
+                        // _calendarFormat = format;
                         log("Format Change Update");
-
-                        dashCtrl.update();
+                        // attendanceCountCurrentMonth = 0;
+                        // sundayCountCurrentMonth = 0;
+                        // dashCtrl.update();
                       },
+
                       onPageChanged: (focusedDay) {
                         focusDate = focusedDay;
                         attendanceCountCurrentMonth = 0;

@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:sms/Authentication/Controller/auth_controller.dart';
-import 'package:sms/Authentication/Views/register_user_screen.dart';
-import 'package:sms/Authentication/Views/student_login.dart';
+import 'package:sms/Authentication/Views/login_screen.dart';
+import 'package:sms/Dashboard/Attendance/view_attendance_by_std.dart';
+import 'package:sms/Models/student_model.dart';
 import 'package:sms/Widgets/custom_button.dart';
 import 'package:sms/Widgets/custom_text_field.dart';
 
-class LoginScreen extends StatelessWidget {
-  static const String routeName = "/login";
+class StudentLogin extends StatelessWidget {
+  static const String routeName = "/student_login";
   final _formKey = GlobalKey<FormState>();
 
   final authController = Get.find<AuthController>();
@@ -19,7 +21,7 @@ class LoginScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text("Teacher Login"),
+        title: const Text("Student Login"),
       ),
       body: SingleChildScrollView(
         child: Form(
@@ -40,7 +42,7 @@ class LoginScreen extends StatelessWidget {
                     height: 20,
                   ),
                   CustomTextField(
-                    hintText: "Email",
+                    hintText: "Name",
                     isShowBorder: true,
                     inputAction: TextInputAction.next,
                     inputType: TextInputType.text,
@@ -50,45 +52,41 @@ class LoginScreen extends StatelessWidget {
                     height: 20,
                   ),
                   CustomTextField(
-                    hintText: "Password",
+                    hintText: "Roll No",
                     isShowBorder: true,
                     inputAction: TextInputAction.next,
                     inputType: TextInputType.visiblePassword,
                     isPassword: true,
                     controller: password,
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 20,
                   ),
                   GetBuilder<AuthController>(builder: (_) {
                     return authController.isLoading
-                        ? Center(child: CircularProgressIndicator())
+                        ? const Center(child: CircularProgressIndicator())
                         : CustomButton(
                             btnTxt: "Login",
                             onTap: () async {
                               if (_formKey.currentState!.validate()) {
                                 authController.startLoading();
-                                await authController.login(
-                                    email.text, password.text);
+                                StudentModel? student = await authController
+                                    .getStudent(email.text, password.text);
                                 authController.stopLoading();
+                                if (student != null) {
+                                  // Get.offAllNamed(ViewAttendanceByStd.routeName,
+                                  //     arguments: student);
+                                  Fluttertoast.showToast(msg: "Done");
+                                }
                               }
                             },
                           );
                   }),
-                  InkWell(
-                    child: const Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Text("Signup"),
-                    ),
-                    onTap: () {
-                      Get.toNamed(RegisterUserScreen.routeName);
-                    },
-                  ),
                   ElevatedButton(
                       onPressed: () {
-                        Get.toNamed(StudentLogin.routeName);
+                        Get.toNamed(LoginScreen.routeName);
                       },
-                      child: const Text("Student Login"))
+                      child: const Text("Teacher Login"))
                 ],
               ),
             ),

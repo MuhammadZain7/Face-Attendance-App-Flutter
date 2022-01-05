@@ -6,12 +6,14 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:sms/Authentication/Views/profile_status.dart';
 
 import 'package:sms/Authentication/auth_services.dart';
 import 'package:encrypt/encrypt.dart' as EncryptPack;
 
 import 'package:dio/dio.dart' as dios;
 import 'package:sms/Dashboard/Screens/dashboard_screen.dart';
+import 'package:sms/Models/student_model.dart';
 import 'package:sms/Models/teacher.dart';
 import 'package:sms/Utils/constants.dart';
 
@@ -24,18 +26,28 @@ class AuthController extends GetxController {
   FirebaseAuth auth = FirebaseAuth.instance;
   CollectionReference teachers =
       FirebaseFirestore.instance.collection('teachers');
+  CollectionReference students =
+      FirebaseFirestore.instance.collection('students');
 
   @override
   void onInit() {
+    initt();
     super.onInit();
+  }
+
+  initt() async {
     if (auth.currentUser?.uid != null) {
-      user = getUserFromStorage();
-      WidgetsBinding.instance!.addPostFrameCallback(
-          (_) => Get.offAllNamed(DashboardScreen.routeName));
+      WidgetsBinding.instance!.addPostFrameCallback((_) async {
+        user = await getUser(
+            getUserFromStorage()!.email, getUserFromStorage()!.password);
+        // user!.status == "enable"
+        //     ? Get.offAllNamed(DashboardScreen.routeName)
+        //     : Get.offAllNamed(ProfileStatus.routeName);
+      });
     }
   }
 
-  getUser(email, password) async {
+  Future<TeacherModel?> getUser(email, password) async {
     QuerySnapshot user = await teachers
         .where("email", isEqualTo: email)
         .where("password", isEqualTo: password)
@@ -44,14 +56,37 @@ class AuthController extends GetxController {
     if (user.docs.isEmpty) {
       showSnackBar("User Data Not Found");
       logOut();
-      return;
+      return null;
     }
 
     TeacherModel userModel =
         TeacherModel.fromJson(user.docs.first.data() as Map<String, dynamic>);
     setUser(userModel);
     setKey(auth.currentUser!.uid);
-    Get.offAllNamed(DashboardScreen.routeName);
+    if (userModel.status == "enable") {
+      Get.offAllNamed(DashboardScreen.routeName);
+    } else {
+      Get.offAllNamed(ProfileStatus.routeName);
+    }
+    return userModel;
+  }
+
+  Future<StudentModel?> getStudent(email, rollNo) async {
+    QuerySnapshot user = await students
+        .where("email", isEqualTo: email)
+        .where("roll_no", isEqualTo: rollNo)
+        .get();
+    log('Student Doc ${user.docs}');
+    if (user.docs.isEmpty) {
+      showSnackBar("Enter Valid Credential");
+      logOut();
+      return null;
+    }
+
+    StudentModel userModel =
+        StudentModel.fromJson(user.docs.first.data() as Map<String, dynamic>);
+
+    return userModel;
   }
 
   startLoading() {
@@ -91,7 +126,7 @@ class AuthController extends GetxController {
           name: name,
           email: email,
           password: password,
-          status: "enable",
+          status: "disable",
           timeStamp: DateTime.now().microsecondsSinceEpoch);
       teachers
           .doc(userCredential.user!.uid)
@@ -99,7 +134,7 @@ class AuthController extends GetxController {
           .then((value) {
         setKey(userModel.id);
         setUser(userModel);
-        Get.offNamed(DashboardScreen.routeName);
+        Get.offAllNamed(ProfileStatus.routeName);
       });
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {

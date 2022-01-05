@@ -1,7 +1,10 @@
 import 'package:get/get.dart';
 import 'package:sms/Authentication/Binding/auth_binding.dart';
+import 'package:sms/Authentication/Controller/auth_controller.dart';
 import 'package:sms/Authentication/Views/login_screen.dart';
+import 'package:sms/Authentication/Views/profile_status.dart';
 import 'package:sms/Authentication/Views/register_user_screen.dart';
+import 'package:sms/Authentication/Views/student_login.dart';
 import 'package:sms/Dashboard/Attendance/attandance.dart';
 import 'package:sms/Dashboard/Attendance/view_attendance_by_std.dart';
 import 'package:sms/Dashboard/Classes/classes.dart';
@@ -65,6 +68,18 @@ class AppPages {
       name: TeacherProfileScreen.routeName,
       page: () => TeacherProfileScreen(),
       binding: DashboardBinding(),
+      preventDuplicates: true,
+    ),
+    GetPage(
+      name: ProfileStatus.routeName,
+      page: () => const ProfileStatus(),
+      binding: DashboardBinding(),
+      preventDuplicates: true,
+    ),
+    GetPage(
+      name: StudentLogin.routeName,
+      page: () => StudentLogin(),
+      binding: AuthBinding(),
       preventDuplicates: true,
     ),
   ];
