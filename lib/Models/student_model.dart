@@ -14,6 +14,8 @@ class StudentModel {
     required this.stdId,
     required this.teacherId,
     required this.classId,
+    required this.className,
+    required this.classCode,
     required this.stdFaceId,
     required this.name,
     required this.photo,
@@ -26,6 +28,8 @@ class StudentModel {
   String stdId;
   String teacherId;
   String classId;
+  String className;
+  String classCode;
   String stdFaceId;
   String name;
   String photo;
@@ -38,6 +42,8 @@ class StudentModel {
         stdId: json["std_id"],
         teacherId: json["teacher_id"],
         classId: json["class_id"],
+        className: json["class_name"],
+        classCode: json["class_code"],
         stdFaceId: json["std_face_id"],
         name: json["name"],
         photo: json["photo"],
@@ -51,6 +57,8 @@ class StudentModel {
         "std_id": stdId,
         "teacher_id": teacherId,
         "class_id": classId,
+        "class_name": className,
+        "class_code": classCode,
         "std_face_id": stdFaceId,
         "name": name,
         "photo": photo,

@@ -40,11 +40,7 @@ class ClassScreen extends StatelessWidget {
                     child: GetBuilder<DashboardController>(builder: (_) {
                   return ListTile(
                     onTap: () {
-                      Get.toNamed(StudentsScreen.routeName, arguments: [
-                        categoryModel.classId,
-                        categoryModel.className,
-                        categoryModel.classCode
-                      ]);
+                      Get.toNamed(StudentsScreen.routeName, arguments: categoryModel);
                     },
                     title: Text(categoryModel.className),
                     subtitle: Text(categoryModel.classCode),

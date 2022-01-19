@@ -49,6 +49,10 @@ class DashboardController extends GetxController {
     return dashService.getClasses();
   }
 
+  Stream<QuerySnapshot> getStudentByEmail(StudentModel studentModel) {
+    return dashService.getStudentByEmail(studentModel);
+  }
+
   Stream<QuerySnapshot> getStudentsByClassId(classId) {
     return dashService.getStudentsByClassId(classId);
   }
@@ -83,9 +87,10 @@ class DashboardController extends GetxController {
   // addCategory(CategoryModel categoryModel) async {
   //   var aa = await category.add(categoryModel.toJson());
   // }
-  addStudentInClass(classId, stdName, email, phone, rollNo, File photo) async {
+  addStudentInClass(classId, className, classCode, stdName, email, phone,
+      rollNo, File photo) async {
     return await dashService.addStudentInClass(
-        classId, stdName, email, phone, rollNo, photo);
+        classId, className, classCode, stdName, email, phone, rollNo, photo);
   }
 
   connectionListener() {
@@ -120,8 +125,8 @@ class DashboardController extends GetxController {
     return await dashService.detectFacesFromImage(image);
   }
 
-  Future<List<AttendanceModel>> getAttendanceByStd(classId, stdId) async {
-    return await dashService.getAttendanceByStd(classId, stdId);
+  Future<List<AttendanceModel>> getAttendanceByStd(classId, stdId, teacherId) async {
+    return await dashService.getAttendanceByStd(classId, stdId, teacherId);
   }
 
   @override

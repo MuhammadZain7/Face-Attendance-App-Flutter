@@ -10,6 +10,7 @@ import 'package:sms/Dashboard/Attendance/view_attendance_by_std.dart';
 import 'package:sms/Dashboard/Classes/classes.dart';
 import 'package:sms/Dashboard/Profile/teacher_profile_screen.dart';
 import 'package:sms/Dashboard/Screens/dashboard_screen.dart';
+import 'package:sms/Dashboard/StudentScreens/view_student_classes.dart';
 import 'package:sms/Dashboard/Students/add_student.dart';
 import 'package:sms/Dashboard/Students/students_screen.dart';
 import 'package:sms/Dashboard/dashboard_binding.dart';
@@ -80,6 +81,12 @@ class AppPages {
       name: StudentLogin.routeName,
       page: () => StudentLogin(),
       binding: AuthBinding(),
+      preventDuplicates: true,
+    ),
+    GetPage(
+      name: ViewStudentClasses.routeName,
+      page: () => ViewStudentClasses(),
+      binding: DashboardBinding(),
       preventDuplicates: true,
     ),
   ];

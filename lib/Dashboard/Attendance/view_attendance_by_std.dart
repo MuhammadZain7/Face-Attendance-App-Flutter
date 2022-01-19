@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -51,7 +52,7 @@ class _ViewAttendanceByStdState extends State<ViewAttendanceByStd> {
 
   loadAttendance() async {
     _listAttendance = await dashCtrl.getAttendanceByStd(
-        _studentModel.classId, _studentModel.stdId);
+        _studentModel.classId, _studentModel.stdId, _studentModel.teacherId);
     isLoading = false;
     log("After Load Attend Update");
     dashCtrl.update();
@@ -107,7 +108,6 @@ class _ViewAttendanceByStdState extends State<ViewAttendanceByStd> {
                         // sundayCountCurrentMonth = 0;
                         // dashCtrl.update();
                       },
-
                       onPageChanged: (focusedDay) {
                         focusDate = focusedDay;
                         attendanceCountCurrentMonth = 0;

@@ -338,7 +338,8 @@ class DashboardService extends GetConnect {
     }
   }
 
-  addStudentInClass(classId, stdName, email, phone, rollNo, File photo) async {
+  addStudentInClass(classId, className, classCode, stdName, email, phone,
+      rollNo, File photo) async {
     List<DetectionModel> faceList = await detectFacesFromImage(photo);
     if (faceList.isEmpty) {
       Fluttertoast.showToast(
@@ -386,6 +387,8 @@ class DashboardService extends GetConnect {
         stdId: stdID,
         teacherId: firebaseAuth.currentUser!.uid,
         classId: classId,
+        className: className,
+        classCode: classCode,
         stdFaceId: faceID,
         name: stdName,
         photo: photoUrl,
@@ -465,12 +468,13 @@ class DashboardService extends GetConnect {
     }
   }
 
-  Future<List<AttendanceModel>> getAttendanceByStd(classId, stdId) async {
+  Future<List<AttendanceModel>> getAttendanceByStd(
+      classId, stdId, teacherId) async {
     List<AttendanceModel> attendanceList = [];
 
     await attendance
         // .orderBy("name", descending: true)
-        .where("teacher_id", isEqualTo: firebaseAuth.currentUser!.uid)
+        .where("teacher_id", isEqualTo: teacherId)
         .where("class_id", isEqualTo: classId)
         .where("std_id", isEqualTo: stdId)
         .get()
@@ -487,6 +491,15 @@ class DashboardService extends GetConnect {
     return classes
         // .orderBy("category_name", descending: true)
         .where("teacher_id", isEqualTo: firebaseAuth.currentUser!.uid)
+        .snapshots();
+  }
+
+  Stream<QuerySnapshot> getStudentByEmail(StudentModel studentModel) {
+    // log("UID ${firebaseAuth.currentUser?.uid ?? "Null"}");
+    return students
+        // .orderBy("category_name", descending: true)
+        .where("email", isEqualTo: studentModel.email)
+        // .where("roll_no", isEqualTo: studentModel.rollNo)
         .snapshots();
   }
 

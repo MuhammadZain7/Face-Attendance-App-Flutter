@@ -9,6 +9,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sms/Dashboard/dashboard_controller.dart';
+import 'package:sms/Models/class_model.dart';
 import 'package:sms/Utils/constants.dart';
 import 'package:sms/Widgets/custom_button.dart';
 import 'package:sms/Widgets/custom_text_field.dart';
@@ -26,7 +27,7 @@ class AddStudentScreen extends StatelessWidget {
   final ImagePicker _picker = ImagePicker();
   final dashCtrl = Get.find<DashboardController>();
 
-  final classId = Get.arguments;
+  ClassModel classModel = Get.arguments;
 
   TextEditingController name = TextEditingController();
   TextEditingController email = TextEditingController();
@@ -132,7 +133,9 @@ class AddStudentScreen extends StatelessWidget {
                                 dashCtrl.update();
 
                                 await dashCtrl.addStudentInClass(
-                                    classId,
+                                    classModel.classId,
+                                    classModel.className,
+                                    classModel.classCode,
                                     name.text,
                                     email.text,
                                     phone.text,

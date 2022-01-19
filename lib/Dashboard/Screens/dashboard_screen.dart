@@ -56,7 +56,7 @@ class DashboardScreen extends StatelessWidget {
               icon: Icon(Icons.perm_identity),
               label: 'Profile',
             ),
-            // BottomNavigationBarItem(
+            // BottomNavigationBarItem(2,
             //   icon: Icon(Icons.school),
             //   label: 'School',
             // ),

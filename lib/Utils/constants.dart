@@ -39,6 +39,11 @@ void logOut() {
   GetStorage().erase();
 }
 
+void logOutStudent() {
+  GetStorage().remove("student");
+  GetStorage().erase();
+}
+
 Map getOpenFeedbackMapping() {
   return {'1': 'Schedule Visit', '2': 'Follow Up', '3': 'Assigned a Callback'};
 }
@@ -103,7 +108,6 @@ Future logoutDialog(BuildContext context) async {
         );
       });
 }
-
 
 TeacherModel? getUserFromStorage() {
   if (GetStorage().read("user") != null) {

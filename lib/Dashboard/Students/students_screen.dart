@@ -23,9 +23,7 @@ class StudentsScreen extends StatelessWidget {
   StudentsScreen({Key? key}) : super(key: key);
   final dashCtrl = Get.find<DashboardController>();
   final _formKey = GlobalKey<FormState>();
-  final classId = Get.arguments[0];
-  final className = Get.arguments[1];
-  final classCode = Get.arguments[2];
+  ClassModel classModel = Get.arguments;
   int? studentLength;
 
   @override
@@ -34,7 +32,7 @@ class StudentsScreen extends StatelessWidget {
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-          title: Text(className),
+          title: Text(classModel.className),
           bottom: const TabBar(
             tabs: [
               Tab(icon: Icon(Icons.person_outline), text: "Students"),
@@ -45,7 +43,7 @@ class StudentsScreen extends StatelessWidget {
         body: TabBarView(
           children: [
             StreamBuilder<QuerySnapshot>(
-              stream: dashCtrl.getStudentsByClassId(classId),
+              stream: dashCtrl.getStudentsByClassId(classModel.classId),
               builder: (context, snapshot) {
                 if (snapshot.data != null &&
                     snapshot.hasData &&
@@ -105,7 +103,8 @@ class StudentsScreen extends StatelessWidget {
               },
             ),
             StreamBuilder<QuerySnapshot>(
-              stream: dashCtrl.getAttendanceByDate(classId, DateTime.now()),
+              stream: dashCtrl.getAttendanceByDate(
+                  classModel.classId, DateTime.now()),
               builder: (context, snapshot) {
                 if (snapshot.data != null &&
                     snapshot.hasData &&
@@ -161,7 +160,8 @@ class StudentsScreen extends StatelessWidget {
             FloatingActionButton(
               onPressed: () {
                 if (studentLength != null && studentLength! > 0) {
-                  Get.toNamed(AttendanceScreen.routeName, arguments: classId);
+                  Get.toNamed(AttendanceScreen.routeName,
+                      arguments: classModel);
                 }
               },
               backgroundColor: Colors.white,
@@ -177,7 +177,7 @@ class StudentsScreen extends StatelessWidget {
             ),
             FloatingActionButton(
               onPressed: () {
-                Get.toNamed(AddStudentScreen.routeName, arguments: classId);
+                Get.toNamed(AddStudentScreen.routeName, arguments: classModel);
               },
               backgroundColor: Colors.white,
               child: Image.asset(
@@ -218,9 +218,7 @@ class StudentsScreen extends StatelessWidget {
                   isDeleting = true;
                   dashCtrl.update();
                   await dashCtrl.deleteStudentFromClass(
-                      studentModel.classId,
-                      studentModel.stdId,
-                      id);
+                      studentModel.classId, studentModel.stdId, id);
                   isDeleting = false;
                   dashCtrl.update();
                   Fluttertoast.showToast(msg: "Deleted Successfully");

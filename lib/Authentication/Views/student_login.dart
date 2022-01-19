@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:sms/Authentication/Controller/auth_controller.dart';
 import 'package:sms/Authentication/Views/login_screen.dart';
 import 'package:sms/Dashboard/Attendance/view_attendance_by_std.dart';
+import 'package:sms/Dashboard/StudentScreens/view_student_classes.dart';
 import 'package:sms/Models/student_model.dart';
 import 'package:sms/Widgets/custom_button.dart';
 import 'package:sms/Widgets/custom_text_field.dart';
@@ -54,6 +55,7 @@ class StudentLogin extends StatelessWidget {
                   CustomTextField(
                     hintText: "Roll No",
                     isShowBorder: true,
+                    required: false,
                     inputAction: TextInputAction.next,
                     inputType: TextInputType.visiblePassword,
                     isPassword: true,
@@ -74,9 +76,11 @@ class StudentLogin extends StatelessWidget {
                                     .getStudent(email.text, password.text);
                                 authController.stopLoading();
                                 if (student != null) {
-                                  // Get.offAllNamed(ViewAttendanceByStd.routeName,
-                                  //     arguments: student);
-                                  Fluttertoast.showToast(msg: "Done");
+                                  authController.setStudent(student);
+                                  Get.offAllNamed(ViewStudentClasses.routeName,
+                                      arguments: student);
+                                  Fluttertoast.showToast(
+                                      msg: "Login Successfully");
                                 }
                               }
                             },

@@ -13,6 +13,7 @@ import 'package:encrypt/encrypt.dart' as EncryptPack;
 
 import 'package:dio/dio.dart' as dios;
 import 'package:sms/Dashboard/Screens/dashboard_screen.dart';
+import 'package:sms/Dashboard/StudentScreens/view_student_classes.dart';
 import 'package:sms/Models/student_model.dart';
 import 'package:sms/Models/teacher.dart';
 import 'package:sms/Utils/constants.dart';
@@ -44,6 +45,13 @@ class AuthController extends GetxController {
         //     ? Get.offAllNamed(DashboardScreen.routeName)
         //     : Get.offAllNamed(ProfileStatus.routeName);
       });
+    } else {
+      StudentModel? a = getStudentFromStorage();
+      if (a != null) {
+        WidgetsBinding.instance!.addPostFrameCallback((_) async {
+          Get.offAllNamed(ViewStudentClasses.routeName, arguments: a);
+        });
+      }
     }
   }
 
@@ -78,7 +86,7 @@ class AuthController extends GetxController {
         .get();
     log('Student Doc ${user.docs}');
     if (user.docs.isEmpty) {
-      showSnackBar("Enter Valid Credential");
+      showSnackBar("Enter Valid Email");
       logOut();
       return null;
     }
@@ -172,6 +180,16 @@ class AuthController extends GetxController {
 
   setUser(TeacherModel userModel) {
     GetStorage().write('user', userModel.toJson());
+  }
+
+  setStudent(StudentModel studentModel) {
+    GetStorage().write('student', studentModel.toJson());
+  }
+
+  StudentModel? getStudentFromStorage() {
+    if (GetStorage().read("student") != null) {
+      return StudentModel.fromJson(GetStorage().read("student"));
+    }
   }
 
   setKey(String key) {

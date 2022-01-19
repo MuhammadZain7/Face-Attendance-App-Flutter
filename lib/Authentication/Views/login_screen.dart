@@ -57,7 +57,7 @@ class LoginScreen extends StatelessWidget {
                     isPassword: true,
                     controller: password,
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 20,
                   ),
                   GetBuilder<AuthController>(builder: (_) {
@@ -85,10 +85,11 @@ class LoginScreen extends StatelessWidget {
                     },
                   ),
                   ElevatedButton(
-                      onPressed: () {
-                        Get.toNamed(StudentLogin.routeName);
-                      },
-                      child: const Text("Student Login"))
+                    onPressed: () {
+                      Get.toNamed(StudentLogin.routeName);
+                    },
+                    child: const Text("Student Login"),
+                  ),
                 ],
               ),
             ),
