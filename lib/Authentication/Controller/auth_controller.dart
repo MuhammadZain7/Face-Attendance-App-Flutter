@@ -82,7 +82,7 @@ class AuthController extends GetxController {
   Future<StudentModel?> getStudent(email, rollNo) async {
     QuerySnapshot user = await students
         .where("email", isEqualTo: email)
-        .where("roll_no", isEqualTo: rollNo)
+
         .get();
     log('Student Doc ${user.docs}');
     if (user.docs.isEmpty) {

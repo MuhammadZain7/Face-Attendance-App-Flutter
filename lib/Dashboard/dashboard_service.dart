@@ -425,7 +425,7 @@ class DashboardService extends GetConnect {
     var aa = await classes.add(classModel.toJson());
   }
 
-  addAttendance(List<StudentModel> list, classId) async {
+  addAttendance(List<StudentModel> list,String classId) async {
     String date = DateTime.now().microsecondsSinceEpoch.toString();
     var now = DateTime.now();
     var nowKey = "${now.year}_${now.month}_${now.day}";

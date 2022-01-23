@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
@@ -6,6 +7,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sms/Dashboard/dashboard_controller.dart';
+import 'package:sms/Models/class_model.dart';
 import 'package:sms/Models/identify_model.dart';
 import 'package:sms/Models/student_model.dart';
 import 'package:sms/Utils/constants.dart';
@@ -14,7 +16,7 @@ class AttendanceScreen extends StatelessWidget {
   AttendanceScreen({Key? key}) : super(key: key);
   static const String routeName = "/attendance_screen";
 
-  final classId = Get.arguments;
+  ClassModel classModel = Get.arguments;
   final dashCtrl = Get.find<DashboardController>();
   XFile? image;
   final ImagePicker _picker = ImagePicker();
@@ -74,7 +76,7 @@ class AttendanceScreen extends StatelessWidget {
               if (studentList.isNotEmpty)
                 TextButton(
                     onPressed: () async {
-                      await dashCtrl.addAttendance(studentList, classId);
+                      await dashCtrl.addAttendance(studentList, classModel.classId);
                       studentList.clear();
                       dashCtrl.update();
                     },
@@ -124,8 +126,10 @@ class AttendanceScreen extends StatelessWidget {
                       if (image != null) {
                         isLoading = true;
                         dashCtrl.update();
-                        List<Candidate> identifiedStudents = await dashCtrl
-                            .faceIdentification(classId, File(image!.path));
+                        log("classsIDD ${classModel.classId}");
+                        List<Candidate> identifiedStudents =
+                            await dashCtrl.faceIdentification(
+                                classModel.classId, File(image!.path));
                         if (identifiedStudents.isNotEmpty) {
                           studentList = await dashCtrl
                               .getStudentFromIds(identifiedStudents);

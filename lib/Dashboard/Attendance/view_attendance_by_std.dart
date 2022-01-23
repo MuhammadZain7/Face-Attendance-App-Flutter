@@ -164,30 +164,30 @@ class _ViewAttendanceByStdState extends State<ViewAttendanceByStd> {
                           if (focusDate.month != day.month) {
                             return null;
                           }
-                          if (day.weekday == DateTime.sunday) {
-                            return Center(
-                              child: Text(
-                                day.day.toString(),
-                                style: const TextStyle(color: Colors.red),
-                              ),
-                            );
+                          //TODO
+                          // if (day.weekday == DateTime.sunday) {
+                          //   return Center(
+                          //     child: Text(
+                          //       day.day.toString(),
+                          //       style: const TextStyle(color: Colors.red),
+                          //     ),
+                          //   );
+                          // } else {
+                          String dayKey = "${day.year}_${day.month}_${day.day}";
+                          List<AttendanceModel> a = _listAttendance
+                              .where((std) => dayKey == std.atdKey)
+                              .toList();
+                          if (a.isNotEmpty) {
+                            ++attendanceCountCurrentMonth;
+                            print(
+                                'today ${day.day} ${attendanceCountCurrentMonth}');
+                            return textDateWidget(
+                                day, day.day.toString(), "present");
                           } else {
-                            String dayKey =
-                                "${day.year}_${day.month}_${day.day}";
-                            List<AttendanceModel> a = _listAttendance
-                                .where((std) => dayKey == std.atdKey)
-                                .toList();
-                            if (a.isNotEmpty) {
-                              ++attendanceCountCurrentMonth;
-                              print(
-                                  'today ${day.day} ${attendanceCountCurrentMonth}');
-                              return textDateWidget(
-                                  day, day.day.toString(), "present");
-                            } else {
-                              return textDateWidget(
-                                  day, day.day.toString(), "absent");
-                            }
+                            return textDateWidget(
+                                day, day.day.toString(), "absent");
                           }
+                          // }
                         },
                       ),
                     ),
