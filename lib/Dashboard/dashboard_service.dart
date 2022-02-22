@@ -74,6 +74,7 @@ class DashboardService extends GetConnect {
   }
 
   Future<List<Candidate>> faceIdentification(classId, File image) async {
+    image =await compressFile(image);
     List<Candidate> identifiedStudent = [];
 
     List<DetectionModel> detectedFace = await detectFacesFromImage(image);
@@ -158,8 +159,6 @@ class DashboardService extends GetConnect {
         .catchError((e) {
       log('Identify Class $e');
     });
-    print(
-        '$classId XXX ${response.statusCode} XXX   Identify Class XXX ${response.body}');
     if (response.statusCode == 200) {
       var a = jsonDecode(response.body);
       List<IdentifyModel> identifyModel =
@@ -340,6 +339,7 @@ class DashboardService extends GetConnect {
 
   addStudentInClass(classId, className, classCode, stdName, email, phone,
       rollNo, File photo) async {
+    photo = await compressFile(photo);
     List<DetectionModel> faceList = await detectFacesFromImage(photo);
     if (faceList.isEmpty) {
       Fluttertoast.showToast(
@@ -376,7 +376,7 @@ class DashboardService extends GetConnect {
 
       return;
     }
-    String? photoUrl = await uploadFile(await compressFile(photo), stdID);
+    String? photoUrl = await uploadFile(photo, stdID);
     if (photoUrl == null) {
       Fluttertoast.showToast(msg: "Image Upload Error");
       log("Image Upload Error");
@@ -407,16 +407,13 @@ class DashboardService extends GetConnect {
     var result = await FlutterImageCompress.compressAndGetFile(
       file.absolute.path,
       targetPath,
-      quality: 88,
+      quality: 30,
 
       // rotate: 180,
     );
-    Fluttertoast.showToast(
-        msg:
-            "Before Size ${file.lengthSync()}  XXX After Size ${result!.lengthSync()}",
-        toastLength: Toast.LENGTH_LONG);
-    log("Before Size ${file.lengthSync()}");
-    log("After Size ${result.lengthSync()}");
+
+    log("Before Size ${file.lengthSync() }  MB");
+    log("After Size ${result!.lengthSync() } MB");
 
     return result;
   }
@@ -425,7 +422,7 @@ class DashboardService extends GetConnect {
     var aa = await classes.add(classModel.toJson());
   }
 
-  addAttendance(List<StudentModel> list,String classId) async {
+  addAttendance(List<StudentModel> list, String classId) async {
     String date = DateTime.now().microsecondsSinceEpoch.toString();
     var now = DateTime.now();
     var nowKey = "${now.year}_${now.month}_${now.day}";

@@ -23,9 +23,6 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       onInit: () {
         Get.put(AuthBinding());
-
-        // Get.put(ChatService());
-        // Get.put(ChatController());
       },
       initialBinding: AuthBinding(),
       initialRoute: LoginScreen.routeName,

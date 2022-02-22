@@ -43,7 +43,7 @@ class StudentLogin extends StatelessWidget {
                     height: 20,
                   ),
                   CustomTextField(
-                    hintText: "Name",
+                    hintText: "Email",
                     isShowBorder: true,
                     inputAction: TextInputAction.next,
                     inputType: TextInputType.text,

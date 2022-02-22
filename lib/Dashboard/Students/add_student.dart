@@ -94,6 +94,7 @@ class AddStudentScreen extends StatelessWidget {
                   inputAction: TextInputAction.next,
                   inputType: TextInputType.emailAddress,
                   controller: email,
+                  isEmail: true,
                 ),
                 SizedBox(
                   height: 10,
@@ -142,11 +143,13 @@ class AddStudentScreen extends StatelessWidget {
                                     rollNo.text,
                                     File(image!.path));
 
-                                await dashCtrl
-                                    .detectFacesFromImage(File(image!.path));
+                                // await dashCtrl
+                                //     .detectFacesFromImage(File(image!.path));
 
                                 isSubmitLoading = false;
+
                                 dashCtrl.update();
+                                Get.back();
                               }
                             },
                           ),

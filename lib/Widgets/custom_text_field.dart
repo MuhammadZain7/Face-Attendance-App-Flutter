@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sms/Utils/color_resources.dart';
@@ -27,6 +26,7 @@ class CustomTextField extends StatefulWidget {
   final bool isSearch;
   final Function? onSubmit;
   final bool isEnabled;
+  final bool isEmail;
   final TextCapitalization capitalization;
   final bool required;
 
@@ -51,6 +51,7 @@ class CustomTextField extends StatefulWidget {
       this.onTap,
       this.isIcon = false,
       this.isPassword = false,
+      this.isEmail = false,
       this.suffixIconUrl,
       this.prefixIconUrl,
       this.isSearch = false,
@@ -77,8 +78,18 @@ class _CustomTextFieldState extends State<CustomTextField> {
       textCapitalization: widget.capitalization,
       enabled: widget.isEnabled,
       validator: (value) {
-        if (widget.required && (value == null || value.isEmpty)) {
-          return 'Required Field';
+        if (widget.isEmail) {
+          if(value == null || value.isEmpty){
+            return 'Required Field';
+          }
+          bool emailValid = RegExp(
+                  r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+              .hasMatch(value);
+          return !emailValid?"Enter Valid Email":null;
+        } else {
+          if (widget.required && (value == null || value.isEmpty)) {
+            return 'Required Field';
+          }
         }
         return null;
       },

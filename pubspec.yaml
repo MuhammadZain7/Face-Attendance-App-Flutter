@@ -40,9 +40,9 @@ dependencies:
   encrypt: ^5.0.1
   fluttertoast: ^8.0.8
   firebase_core: ^1.10.6
-  firebase_auth: ^3.3.4
-  cloud_firestore: ^3.1.5
-  firebase_storage: ^10.2.4
+  firebase_auth: ^3.3.4 #// using authentication
+  cloud_firestore: ^3.1.5 #//using for store data
+  firebase_storage: ^10.2.4 # Images storage
   dio: ^4.0.4
   connectivity: ^3.0.6
   uuid: ^3.0.5

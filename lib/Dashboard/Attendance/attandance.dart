@@ -36,16 +36,35 @@ class AttendanceScreen extends StatelessWidget {
           child: Column(
             children: [
               Center(
-                child: image != null
-                    ? Image.file(
-                        File(image!.path),
-                        height: 200,
-                        width: double.infinity,
-                      )
-                    : Image.asset(
-                        "assets/icons/capture.png",
-                        height: 200,
-                      ),
+                child: InkWell(
+                  onTap: () async {
+                    if (kIsWeb) {
+                      image = await _picker.pickImage(source: ImageSource.gallery);
+                    } else {
+                      String? selectedType = await pickImageDialog(context);
+                      if (selectedType == "Camera") {
+                        image =
+                            await _picker.pickImage(source: ImageSource.camera);
+                      } else if (selectedType == "Gallery") {
+                        image = await _picker.pickImage(
+                            source: ImageSource.gallery);
+                      } else {
+                        Fluttertoast.showToast(msg: "Select Image");
+                      }
+                    }
+                    dashCtrl.update();
+                  },
+                  child: image != null
+                      ? Image.file(
+                          File(image!.path),
+                          height: 200,
+                          width: double.infinity,
+                        )
+                      : Image.asset(
+                          "assets/icons/capture.png",
+                          height: 200,
+                        ),
+                ),
               ),
               const Padding(
                 padding: EdgeInsets.all(8.0),
@@ -76,7 +95,8 @@ class AttendanceScreen extends StatelessWidget {
               if (studentList.isNotEmpty)
                 TextButton(
                     onPressed: () async {
-                      await dashCtrl.addAttendance(studentList, classModel.classId);
+                      await dashCtrl.addAttendance(
+                          studentList, classModel.classId);
                       studentList.clear();
                       dashCtrl.update();
                     },
@@ -118,7 +138,7 @@ class AttendanceScreen extends StatelessWidget {
                       height: 40,
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 10,
                   ),
                   FloatingActionButton(

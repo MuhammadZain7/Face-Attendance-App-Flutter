@@ -44,6 +44,8 @@ class LoginScreen extends StatelessWidget {
                     isShowBorder: true,
                     inputAction: TextInputAction.next,
                     inputType: TextInputType.text,
+                    isEmail:true,
+
                     controller: email,
                   ),
                   const SizedBox(

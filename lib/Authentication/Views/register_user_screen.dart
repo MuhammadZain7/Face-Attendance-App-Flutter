@@ -38,7 +38,7 @@ class RegisterUserScreen extends StatelessWidget {
                   inputType: TextInputType.text,
                   controller: name,
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 20,
                 ),
                 CustomTextField(
@@ -47,6 +47,8 @@ class RegisterUserScreen extends StatelessWidget {
                   inputAction: TextInputAction.next,
                   inputType: TextInputType.emailAddress,
                   controller: email,
+                  isEmail:true,
+
                 ),
                 SizedBox(
                   height: 20,
