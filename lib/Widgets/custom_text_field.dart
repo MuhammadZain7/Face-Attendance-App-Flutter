@@ -102,7 +102,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
             ]
           : null,
       decoration: InputDecoration(
-        contentPadding: EdgeInsets.symmetric(vertical: 16, horizontal: 22),
+        contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 22),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10.0),
           borderSide: BorderSide(style: BorderStyle.none, width: 0),
