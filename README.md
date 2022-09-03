@@ -1,11 +1,16 @@
 ## FACE Attendance App Flutter
 
 
- <div align="center"><kbd><img alt="App Tour" src="Readme_files/app_tour.gif" width="260" height="538" style="border-style: solid; border-color: #FFFFFF; border-width:1px;"/></kbd></div>
-<br></br>
+ 
 <div align="center">
-<img src="Readme_files/home_screen.png" width="260" height="538"/>&nbsp;<img src="Readme_files/global_screen.png" width="260" height="538"/>&nbsp;&nbsp;<img src="Readme_files/country_list.png" width="260" height="538"/><br></br>
-<img src="Readme_files/news_screen.png" width="260" height="538"/><img src="Readme_files/country_screen.png" width="260" height="538"/>&nbsp;<img src="Readme_files/credits_screen.png" width="260" height="538"/><br></br>
+<img src="test/login.jpg" width="260" height="538"/>
+<img src="test/students.jpg" width="260" height="538"/>&nbsp;
+<img src="test/add_student.jpg" width="260" height="538"/>&nbsp; <br>
+<img src="test/mark_attendance.jpg" width="260" height="538"/>
+<img src="test/today_attendance.jpg" width="260" height="538"/>
+<img src="test/track_attendance.jpg" width="260" height="538"/>&nbsp;
+
+<br></br>
  
 </div>
 
