@@ -1,16 +1,9 @@
-# sms
+FACE Attendance App Flutter
 
-School Management System By Ziyaan
-
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+⭐ Future Features
+  Create Classes
+  Add Multiple Students in class with face 
+  Mark Attendance maximum 10 students at a time with 1 Picture
+  Track Daily Attendance
+  Track Monthly Attendance
+  Feel free to fork and contribute to include these features. ❤︎
